@@ -1,6 +1,6 @@
 {
   "name": "trim-md",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Trim and optimize markdown files for LLM agent consumption",
   "license": "MIT"
 }

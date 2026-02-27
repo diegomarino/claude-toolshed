@@ -1,6 +1,6 @@
 {
   "name": "mermaid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generate, validate, render Mermaid diagrams from text or code",
   "license": "MIT"
 }
