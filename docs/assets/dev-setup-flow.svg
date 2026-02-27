@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1212.3519999999999 686.3" width="1212.3519999999999" height="686.3" style="--bg:#FFFFFF;--fg:#27272A;background:var(--bg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="main" data-label="main branch">
+  <rect x="40" y="40" width="544.3199999999999" height="351.6" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="40" width="544.3199999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="52" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">main branch</text>
+</g>
+<g class="subgraph" data-id="worktree" data-label="gtr new feature-x">
+  <rect x="604.3199999999999" y="40" width="568.0319999999999" height="606.3" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="604.3199999999999" y="40" width="568.0319999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="616.3199999999999" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">gtr new feature-x</text>
+</g>
+<polyline class="edge" data-from="M_START" data-to="M_TMUX" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="343.1719833333333,120.9 343.1719833333333,132.9 269.775,132.9 269.775,168.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="M_TMUX" data-to="M_BRANCH" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="249.1872,205.8 249.1872,217.8 95.8705,217.8 95.8705,253.8" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="M_TMUX" data-to="M_API" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="304.08799999999997,187.35000000000002 304.90582499999994,187.35000000000002 304.90582499999994,272.25 305.72364999999996,272.25" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="M_API" data-to="M_API_P" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="335.72364999999996,290.70000000000005 335.72364999999996,338.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="M_TMUX" data-to="M_WEB" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="304.08799999999997,187.35000000000002 304.90582499999994,187.35000000000002 304.90582499999994,272.25 391.953,272.25" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="M_WEB" data-to="M_WEB_P" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="424.784,290.70000000000005 424.784,338.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="M_TMUX" data-to="M_SB" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="262.9124,205.8 262.9124,229.8 215.09699999999998,229.8 215.09699999999998,253.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="M_SB" data-to="M_SB_P" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="215.09699999999998,290.70000000000005 215.09699999999998,338.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="M_START" data-to="M_CHROME" data-style="dotted" data-arrow-start="false" data-arrow-end="true" points="380.6203166666666,120.9 380.6203166666666,132.9 524.374,132.9 524.374,168.9" fill="none" stroke="var(--_line)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="M_CHROME" data-to="M_CDP" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="524.374,205.8 524.374,253.8" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="W_HOOK" data-to="W_PORTS" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="959.3758999999999,120.9 959.3758999999999,168.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_PORTS" data-to="W_ENV" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="962.3102999999999,205.8 962.3102999999999,253.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_ENV" data-to="W_START" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="962.3102999999999,290.70000000000005 962.3102999999999,338.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_START" data-to="W_TMUX" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="943.5861333333332,375.6 943.5861333333332,387.6 860.0299999999999,387.6 860.03,423.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_TMUX" data-to="W_BRANCH" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="839.4422,460.5 839.4422,472.5 673.1579999999999,472.5 673.1579999999999,508.5" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="W_TMUX" data-to="W_API" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="866.8925999999999,460.5 866.8925999999999,484.5 917.6424,484.5 917.6424,508.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_API" data-to="W_API_P" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="917.6424,545.4 917.6424,593.4" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="W_TMUX" data-to="W_WEB" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="880.6177999999999,460.5 880.6177999999999,472.5 1012.8159999999999,472.5 1012.8159999999999,508.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_WEB" data-to="W_WEB_P" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="1012.8159999999999,545.4 1012.8159999999998,593.4" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="W_TMUX" data-to="W_SB" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="853.1673999999999,460.5 853.1673999999999,484.5 805.3519999999999,484.5 805.3519999999999,508.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_SB" data-to="W_SB_P" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="805.3519999999999,545.4 805.3519999999999,593.4" fill="none" stroke="var(--_line)" stroke-width="1" />
+<polyline class="edge" data-from="W_START" data-to="W_CHROME" data-style="dotted" data-arrow-start="false" data-arrow-end="true" points="981.0344666666665,375.6 981.0344666666665,387.6 1112.406,387.6 1112.406,423.6" fill="none" stroke="var(--_line)" stroke-width="1" stroke-dasharray="4 4" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="W_CHROME" data-to="W_CDP" data-style="solid" data-arrow-start="false" data-arrow-end="false" points="1112.406,460.5 1112.406,508.5" fill="none" stroke="var(--_line)" stroke-width="1" />
+<g class="node" data-id="M_START" data-label="dev-start.sh" data-shape="rectangle">
+  <rect x="305.72364999999996" y="84" width="112.345" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="361.89615" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">dev-start.sh</text>
+</g>
+<g class="node" data-id="M_TMUX" data-label="tmux" data-shape="rectangle">
+  <rect x="235.462" y="168.9" width="68.626" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="269.775" y="187.35000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">tmux</text>
+</g>
+<g class="node" data-id="M_BRANCH" data-label="b-main" data-shape="stadium">
+  <rect x="56" y="253.8" width="79.74100000000001" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="95.8705" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">b-main</text>
+</g>
+<g class="node" data-id="M_API" data-label="api" data-shape="rectangle">
+  <rect x="305.72364999999996" y="253.8" width="60" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="335.72364999999996" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">api</text>
+</g>
+<g class="node" data-id="M_API_P" data-label=":3000" data-shape="stadium">
+  <rect x="287.17599999999993" y="338.70000000000005" width="74.554" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="324.4529999999999" y="357.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:3000</text>
+</g>
+<g class="node" data-id="M_WEB" data-label="web" data-shape="rectangle">
+  <rect x="391.953" y="253.8" width="65.662" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="424.784" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">web</text>
+</g>
+<g class="node" data-id="M_WEB_P" data-label=":5173" data-shape="stadium">
+  <rect x="389.72999999999996" y="338.70000000000005" width="70.108" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="424.784" y="357.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:5173</text>
+</g>
+<g class="node" data-id="M_SB" data-label="storybook" data-shape="rectangle">
+  <rect x="163.74099999999999" y="253.8" width="102.71199999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="215.09699999999998" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">storybook</text>
+</g>
+<g class="node" data-id="M_SB_P" data-label=":61000" data-shape="stadium">
+  <rect x="176.338" y="338.70000000000005" width="77.518" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="215.09699999999998" y="357.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:61000</text>
+</g>
+<g class="node" data-id="M_CHROME" data-label="Chrome" data-shape="rectangle">
+  <rect x="480.428" y="168.9" width="87.892" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="524.374" y="187.35000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Chrome</text>
+</g>
+<g class="node" data-id="M_CDP" data-label=":19222" data-shape="stadium">
+  <rect x="485.615" y="253.8" width="77.518" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="524.374" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:19222</text>
+</g>
+<g class="node" data-id="W_HOOK" data-label="post-checkout.sh" data-shape="rectangle">
+  <rect x="887.6424" y="84" width="143.467" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="959.3759" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">post-checkout.sh</text>
+</g>
+<g class="node" data-id="W_PORTS" data-label="dev-wt-ports.sh" data-shape="rectangle">
+  <rect x="896.1342999999999" y="168.9" width="132.352" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="962.3103" y="187.35000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">dev-wt-ports.sh</text>
+</g>
+<g class="node" data-id="W_ENV" data-label=".wt-ports.env" data-shape="rectangle">
+  <rect x="903.9147999999999" y="253.8" width="116.791" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="962.3102999999999" y="272.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">.wt-ports.env</text>
+</g>
+<g class="node" data-id="W_START" data-label="dev-start.sh" data-shape="rectangle">
+  <rect x="906.1377999999999" y="338.70000000000005" width="112.345" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="962.3102999999999" y="357.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">dev-start.sh</text>
+</g>
+<g class="node" data-id="W_TMUX" data-label="tmux" data-shape="rectangle">
+  <rect x="825.7169999999999" y="423.6" width="68.626" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="860.0299999999999" y="442.05" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">tmux</text>
+</g>
+<g class="node" data-id="W_BRANCH" data-label="b-feature-x" data-shape="stadium">
+  <rect x="620.3199999999999" y="508.5" width="105.67599999999999" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="673.1579999999999" y="526.95" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">b-feature-x</text>
+</g>
+<g class="node" data-id="W_API" data-label="api" data-shape="rectangle">
+  <rect x="887.6424" y="508.5" width="60" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="917.6424" y="526.95" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">api</text>
+</g>
+<g class="node" data-id="W_API_P" data-label=":3001" data-shape="stadium">
+  <rect x="879.6539999999999" y="593.4" width="70.108" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="914.7079999999999" y="611.85" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:3001</text>
+</g>
+<g class="node" data-id="W_WEB" data-label="web" data-shape="rectangle">
+  <rect x="979.9849999999999" y="508.5" width="65.662" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1012.8159999999999" y="526.95" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">web</text>
+</g>
+<g class="node" data-id="W_WEB_P" data-label=":5174" data-shape="stadium">
+  <rect x="977.7619999999998" y="593.4" width="70.108" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="1012.8159999999998" y="611.85" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:5174</text>
+</g>
+<g class="node" data-id="W_SB" data-label="storybook" data-shape="rectangle">
+  <rect x="753.9959999999999" y="508.5" width="102.71199999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="805.3519999999999" y="526.95" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">storybook</text>
+</g>
+<g class="node" data-id="W_SB_P" data-label=":61001" data-shape="stadium">
+  <rect x="768.8159999999999" y="593.4" width="73.072" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="805.3519999999999" y="611.85" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:61001</text>
+</g>
+<g class="node" data-id="W_CHROME" data-label="Chrome" data-shape="rectangle">
+  <rect x="1068.46" y="423.6" width="87.892" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="1112.406" y="442.05" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Chrome</text>
+</g>
+<g class="node" data-id="W_CDP" data-label=":19223" data-shape="stadium">
+  <rect x="1073.647" y="508.5" width="77.518" height="36.900000000000006" rx="18.450000000000003" ry="18.450000000000003" fill="#bd93f9" stroke="#bd93f9" stroke-width="0.75" />
+  <text x="1112.406" y="526.95" text-anchor="middle" font-size="13" font-weight="500" fill="#fff" dy="4.55">:19223</text>
+</g>
+</svg>

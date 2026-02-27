@@ -1,0 +1,8 @@
+flowchart TD
+    A([Start]) --> B[Receive Request]
+    B --> C{Valid?}
+    C -- Yes --> D[Process Data]
+    C -- No --> E[Return Error]
+    D --> F[Save Result]
+    F --> G([End])
+    E --> G

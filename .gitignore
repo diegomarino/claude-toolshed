@@ -1,0 +1,39 @@
+# macOS
+**/.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor swap/backup files
+*.swp
+*.swo
+*~
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# Node (future-proofing)
+node_modules/
+
+# Windows
+Thumbs.db
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+.worktrees/
+
+# Mermaid plugin output
+diagrams/
+
+# Tooling
+.obsidian/
+.claude/
+
+# Scratch files
+scratch/
+docs/plans/

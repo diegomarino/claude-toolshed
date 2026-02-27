@@ -1,0 +1,7 @@
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> Processing : submit
+    Processing --> Success : done
+    Processing --> Failed : error
+    Failed --> Idle : retry
+    Success --> [*]

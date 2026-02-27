@@ -1,0 +1,33 @@
+{
+  "name": "claude-toolshed",
+  "owner": {
+    "name": "Diego Marino"
+  },
+  "metadata": {
+    "description": "A plugin marketplace for Claude Code — pre-packaged skills for diagrams, code audits, dev servers, and markdown optimization.",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "mermaid",
+      "source": "./plugins/mermaid",
+      "description": "Generate, validate, render Mermaid diagrams from text or code"
+    },
+    {
+      "name": "merge-checks",
+      "source": "./plugins/merge-checks",
+      "description": "Audit code changes across 13 quality dimensions"
+    },
+    {
+      "name": "dev-setup",
+      "source": "./plugins/dev-setup",
+      "description": "Generate dev server lifecycle scripts with pool-based port isolation"
+    },
+    {
+      "name": "trim-md",
+      "source": "./plugins/trim-md",
+      "description": "Trim and optimize markdown files for LLM agent consumption"
+    }
+  ]
+}

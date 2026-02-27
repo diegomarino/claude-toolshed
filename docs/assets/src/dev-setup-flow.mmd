@@ -1,0 +1,60 @@
+flowchart LR
+    subgraph main["main branch"]
+        direction TB
+        M_START["dev-start.sh"]
+        M_TMUX["tmux"]
+        M_BRANCH(["b-main"])
+        M_API["api"]
+        M_API_P([":3000"])
+        M_WEB["web"]
+        M_WEB_P([":5173"])
+        M_SB["storybook"]
+        M_SB_P([":61000"])
+        M_CHROME["Chrome"]
+        M_CDP([":19222"])
+        M_START --> M_TMUX
+        M_TMUX --- M_BRANCH
+        M_TMUX --> M_API
+        M_API --- M_API_P
+        M_TMUX --> M_WEB
+        M_WEB --- M_WEB_P
+        M_TMUX --> M_SB
+        M_SB --- M_SB_P
+        M_START -.-> M_CHROME
+        M_CHROME --- M_CDP
+    end
+
+    subgraph worktree["gtr new feature-x"]
+        direction TB
+        W_HOOK["post-checkout.sh"]
+        W_PORTS["dev-wt-ports.sh"]
+        W_ENV[".wt-ports.env"]
+        W_START["dev-start.sh"]
+        W_TMUX["tmux"]
+        W_BRANCH(["b-feature-x"])
+        W_API["api"]
+        W_API_P([":3001"])
+        W_WEB["web"]
+        W_WEB_P([":5174"])
+        W_SB["storybook"]
+        W_SB_P([":61001"])
+        W_CHROME["Chrome"]
+        W_CDP([":19223"])
+        W_HOOK --> W_PORTS
+        W_PORTS --> W_ENV
+        W_ENV --> W_START
+        W_START --> W_TMUX
+        W_TMUX --- W_BRANCH
+        W_TMUX --> W_API
+        W_API --- W_API_P
+        W_TMUX --> W_WEB
+        W_WEB --- W_WEB_P
+        W_TMUX --> W_SB
+        W_SB --- W_SB_P
+        W_START -.-> W_CHROME
+        W_CHROME --- W_CDP
+    end
+
+    classDef val fill:#bd93f9,color:#fff,stroke:#bd93f9,font-weight:bold
+    class M_BRANCH,M_API_P,M_WEB_P,M_SB_P,M_CDP val
+    class W_BRANCH,W_API_P,W_WEB_P,W_SB_P,W_CDP val

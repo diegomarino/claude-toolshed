@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 258.284 589.6" width="258.284" height="589.6" style="--bg:#FFFFFF;--fg:#27272A;background:var(--bg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="Frontend" data-label="Frontend">
+  <rect x="63.45325" y="40" width="125.82" height="96.9" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="63.45325" y="40" width="125.82" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="75.45325" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Frontend</text>
+</g>
+<g class="subgraph" data-id="Backend" data-label="Backend">
+  <rect x="40" y="196.9" width="156.31275" height="181.8" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="196.9" width="156.31275" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="52" y="210.9" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Backend</text>
+</g>
+<g class="subgraph" data-id="Storage" data-label="Storage">
+  <rect x="88.01800000000001" y="438.70000000000005" width="130.266" height="110.9" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="88.01800000000001" y="438.70000000000005" width="130.266" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="100.01800000000001" y="452.70000000000005" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Storage</text>
+</g>
+<polyline class="edge" data-from="A" data-to="B" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="126.36325,120.9 126.36325,240.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="B" data-to="D" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="126.36325,277.8 126.36325,301.8 153.151,301.8 153.151,482.70000000000005" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="B" data-to="C" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="126.36325,277.8 126.36325,301.8 99.5755,301.8 99.5755,325.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="node" data-id="A" data-label="Web App" data-shape="rectangle">
+  <rect x="79.45325" y="84" width="93.82" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="126.36325" y="102.45" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Web App</text>
+</g>
+<g class="node" data-id="B" data-label="API Server" data-shape="rectangle">
+  <rect x="72.41375" y="240.9" width="107.899" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="126.36325" y="259.35" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">API Server</text>
+</g>
+<g class="node" data-id="C" data-label="Worker" data-shape="rectangle">
+  <rect x="56" y="325.8" width="87.151" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="99.5755" y="344.25" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Worker</text>
+</g>
+<g class="node" data-id="D" data-label="Database" data-shape="cylinder">
+  <rect x="104.01800000000001" y="489.70000000000005" width="98.26599999999999" height="36.900000000000006" fill="var(--_node-fill)" stroke="none" />
+  <line x1="104.01800000000001" y1="489.70000000000005" x2="104.01800000000001" y2="526.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <line x1="202.284" y1="489.70000000000005" x2="202.284" y2="526.6" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <ellipse cx="153.151" cy="526.6" rx="49.132999999999996" ry="7" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <ellipse cx="153.151" cy="489.70000000000005" rx="49.132999999999996" ry="7" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="153.151" y="508.15000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Database</text>
+</g>
+</svg>

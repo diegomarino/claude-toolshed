@@ -1,0 +1,27 @@
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER {
+        string name
+        string email
+    }
+    ORDER ||--|{ LINE_ITEM : contains
+    ORDER {
+        int id
+        date created
+        string status
+    }
+    LINE_ITEM }o--|| PRODUCT : references
+    LINE_ITEM {
+        int quantity
+        float price
+    }
+    PRODUCT {
+        string name
+        string category
+        float price
+    }
+    PRODUCT }o--|| CATEGORY : "belongs to"
+    CATEGORY {
+        string name
+        string description
+    }

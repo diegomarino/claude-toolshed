@@ -1,0 +1,148 @@
+name: Auto Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  auto-release:
+    runs-on: ubuntu-latest
+    # Skip if this push was made by the release bot (avoid infinite loops)
+    if: "!startsWith(github.event.head_commit.message, 'release:')"
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed plugins
+        id: detect
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "last_tag=$LAST_TAG" >> "$GITHUB_OUTPUT"
+
+          if [[ -z "$LAST_TAG" ]]; then
+            # No tags yet — all plugins are "changed"
+            CHANGED=$(ls -d plugins/*/ 2>/dev/null | xargs -I{} basename {} | tr '\n' ' ')
+          else
+            CHANGED=$(git diff --name-only "$LAST_TAG"..HEAD -- plugins/ \
+              | sed -n 's|^plugins/\([^/]*\)/.*|\1|p' \
+              | sort -u \
+              | tr '\n' ' ')
+          fi
+
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
+
+          if [[ -z "$CHANGED" ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump versions
+        if: steps.detect.outputs.skip == 'false'
+        id: bump
+        run: |
+          CHANGED="${{ steps.detect.outputs.changed }}"
+          MARKETPLACE=".claude-plugin/marketplace.json"
+
+          bump_semver() {
+            local version="$1" level="$2"
+            local major minor patch
+            IFS='.' read -r major minor patch <<< "$version"
+            case "$level" in
+              patch) echo "$major.$minor.$((patch + 1))" ;;
+              minor) echo "$major.$((minor + 1)).0" ;;
+              major) echo "$((major + 1)).0.0" ;;
+            esac
+          }
+
+          # Determine bump level from commit messages since last tag
+          LAST_TAG="${{ steps.detect.outputs.last_tag }}"
+          LEVEL="patch"
+          if [[ -n "$LAST_TAG" ]]; then
+            COMMITS=$(git log --format="%s" "$LAST_TAG"..HEAD)
+            if echo "$COMMITS" | grep -qiE "BREAKING CHANGE|^[a-z]+(\(.+\))?!:"; then
+              LEVEL="major"
+            elif echo "$COMMITS" | grep -qiE "^feat(\(.+\))?:"; then
+              LEVEL="minor"
+            fi
+          fi
+          echo "level=$LEVEL" >> "$GITHUB_OUTPUT"
+
+          BUMPED=""
+          for plugin in $CHANGED; do
+            PLUGIN_JSON="plugins/$plugin/.claude-plugin/plugin.json"
+            [[ -f "$PLUGIN_JSON" ]] || continue
+            OLD=$(jq -r '.version // "0.0.0"' "$PLUGIN_JSON")
+            NEW=$(bump_semver "$OLD" "$LEVEL")
+            jq --arg v "$NEW" '.version = $v' "$PLUGIN_JSON" > tmp.json && mv tmp.json "$PLUGIN_JSON"
+            echo "  $plugin: $OLD → $NEW"
+            BUMPED="$BUMPED $plugin"
+          done
+
+          # Bump marketplace version
+          MKT_OLD=$(jq -r '.metadata.version // "0.0.0"' "$MARKETPLACE")
+          MKT_NEW=$(bump_semver "$MKT_OLD" "$LEVEL")
+          jq --arg v "$MKT_NEW" '.metadata.version = $v' "$MARKETPLACE" > tmp.json && mv tmp.json "$MARKETPLACE"
+          echo "  marketplace: $MKT_OLD → $MKT_NEW"
+
+          echo "new_version=$MKT_NEW" >> "$GITHUB_OUTPUT"
+          echo "bumped=$BUMPED" >> "$GITHUB_OUTPUT"
+
+      - name: Commit, tag, and push
+        if: steps.detect.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.bump.outputs.new_version }}"
+          BUMPED="${{ steps.bump.outputs.bumped }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/ plugins/*/.claude-plugin/
+          git commit -m "release: v$VERSION ($BUMPED)"
+          git tag "v$VERSION"
+          git push origin main --tags
+
+      - name: Build changelog
+        if: steps.detect.outputs.skip == 'false'
+        id: changelog
+        run: |
+          VERSION="${{ steps.bump.outputs.new_version }}"
+          LAST_TAG="${{ steps.detect.outputs.last_tag }}"
+
+          if [[ -n "$LAST_TAG" ]]; then
+            CHANGES=$(git log --oneline "$LAST_TAG..v$VERSION" -- plugins/ \
+              | grep -v "^.* release:" | head -20)
+          else
+            CHANGES=$(git log --oneline "v$VERSION" -- plugins/ \
+              | grep -v "^.* release:" | head -20)
+          fi
+
+          {
+            echo "changes<<ENDOFCHANGES"
+            echo "$CHANGES"
+            echo "ENDOFCHANGES"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        if: steps.detect.outputs.skip == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.bump.outputs.new_version }}
+          name: v${{ steps.bump.outputs.new_version }}
+          body: |
+            ## Changes
+
+            ${{ steps.changelog.outputs.changes }}
+
+            **Bump level:** ${{ steps.bump.outputs.level }} | **Plugins:** ${{ steps.bump.outputs.bumped }}
+
+            ## Install / Update
+
+            ```
+            /plugin marketplace add diegomarino/claude-toolshed
+            /plugin marketplace update claude-toolshed
+            ```
+          draft: false
+          prerelease: false

@@ -1,0 +1,24 @@
+{
+  "name": "claude-toolshed",
+  "version": "1.0.0",
+  "description": "A plugin marketplace for Claude Code — install pre-packaged skills directly into your Claude environment.",
+  "private": true,
+  "scripts": {
+    "lint:md": "markdownlint-cli2 \"**/*.md\"",
+    "lint:md:fix": "markdownlint-cli2 --fix \"**/*.md\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "lint-staged": {
+    "*.md": "markdownlint-cli2 --fix"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "markdownlint-cli2": "^0.21.0"
+  }
+}

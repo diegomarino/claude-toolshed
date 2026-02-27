@@ -1,0 +1,2 @@
+bash scripts/check-single-plugin.sh
+npx lint-staged

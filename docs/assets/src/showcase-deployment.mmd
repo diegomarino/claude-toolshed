@@ -1,0 +1,17 @@
+flowchart LR
+    subgraph CDN
+        A[Static Assets]
+    end
+    subgraph App Tier
+        B[Web Server]
+        C[API Server]
+    end
+    subgraph Data Tier
+        D[(PostgreSQL)]
+        E[(Redis)]
+    end
+
+    A --> B
+    B --> C
+    C --> D
+    C --> E

@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph phase1["Phase 1 — Mechanical"]
+        direction TB
+        PRE["precompute.sh"]
+        S1["16 bash scripts"]
+        DATA["structured data"]
+        PRE --> S1
+        S1 --> DATA
+    end
+
+    subgraph phase2["Phase 2 — Reasoning"]
+        direction TB
+        A["Agent A\ndocs"]
+        B["Agent B\ncomments"]
+        C["Agent C\nshared types"]
+    end
+
+    subgraph phase3["Phase 3 — Compile"]
+        direction TB
+        MERGE["aggregate"]
+        COV["coverage check"]
+        OUT["prioritized\ntask list"]
+        MERGE --> COV
+        COV --> OUT
+    end
+
+    DATA --> A
+    DATA --> B
+    DATA --> C
+    A --> MERGE
+    B --> MERGE
+    C --> MERGE

@@ -1,0 +1,13 @@
+classDiagram
+    class Animal {
+        +String name
+        +move()
+    }
+    class Dog {
+        +fetch()
+    }
+    class Cat {
+        +purr()
+    }
+    Animal <|-- Dog
+    Animal <|-- Cat

@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant User
+    participant Gateway
+    participant Service
+
+    User ->> Gateway: GET /orders
+    Gateway ->> Service: fetchOrders()
+    Service -->> Gateway: Order[]
+    Gateway -->> User: 200 OK

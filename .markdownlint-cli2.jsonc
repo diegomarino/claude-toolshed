@@ -1,0 +1,15 @@
+{
+  // markdownlint-cli2 configuration
+  // Optimized for LLM/agent consumption: minimize token waste, enforce clean structure
+  //
+  // Rule config lives in .markdownlint.json (extends-compatible)
+  // This file handles cli2-specific settings: ignores, globs, etc.
+
+  // Ignore generated/vendored/worktree content
+  "ignores": [
+    "node_modules/**",
+    ".worktrees/**",
+    ".pytest_cache/**",
+    "external_plugins/**"
+  ]
+}

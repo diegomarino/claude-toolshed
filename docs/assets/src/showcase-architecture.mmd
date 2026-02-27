@@ -1,0 +1,15 @@
+flowchart TB
+    subgraph Frontend
+        A[Web App]
+    end
+    subgraph Backend
+        B[API Server]
+        C[Worker]
+    end
+    subgraph Storage
+        D[(Database)]
+    end
+
+    A --> B
+    B --> C
+    B --> D

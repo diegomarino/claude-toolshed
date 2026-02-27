@@ -1,0 +1,7 @@
+flowchart LR
+    subgraph src [Source]
+        A[Input] ==> B([Transform])
+    end
+    B -->|data| C{Route}
+    C -.->|log| D[(Store)]
+    D --> E[File]

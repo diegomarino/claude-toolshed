@@ -1,0 +1,35 @@
+{
+  "default": true,
+
+  // === ENFORCE: Token waste reduction ===
+  "MD009": true,                          // No trailing spaces (invisible token waste)
+  "MD010": true,                          // No hard tabs (inconsistent tokenization)
+  "MD012": { "maximum": 1 },              // Max 1 consecutive blank line (each wastes a token)
+  "MD047": true,                          // Files end with single newline
+
+  // === ENFORCE: Heading hierarchy (critical for chunking/RAG) ===
+  "MD001": true,                          // Headings must increment by one level
+  "MD003": { "style": "atx" },            // Consistent ATX-style headings (#)
+  "MD022": { "lines_above": 1, "lines_below": 1 }, // Blank lines around headings
+  "MD025": true,                          // Single top-level H1
+
+  // === ENFORCE: Clean structure ===
+  "MD031": { "list_items": true },        // Blank lines around fenced code blocks
+  "MD032": true,                          // Blank lines around lists
+  "MD037": true,                          // No spaces inside emphasis markers
+  "MD038": true,                          // No spaces inside code span markers
+  "MD039": true,                          // No spaces inside link text
+  "MD046": { "style": "fenced" },         // Consistent fenced code blocks (not indented)
+  "MD048": { "style": "backtick" },       // Use backticks for fenced code (not tildes)
+
+  // === RELAX: Not relevant for LLM consumption ===
+  "MD013": false,                         // Line length — LLMs don't care; hard wraps split semantic units
+  "MD024": false,                         // No duplicate headings — valid in large docs with repeated patterns
+  "MD033": false,                         // Inline HTML — many SKILL.md files use HTML purposefully
+  "MD036": false,                         // Emphasis as heading — used stylistically in some skill files
+  "MD040": false,                         // Code block language — unfixable automatically
+  "MD041": false,                         // First line H1 — SKILL.md files use YAML frontmatter
+  "MD055": false,                         // Table pipe style — cosmetics
+  "MD056": false,                         // Table column count — cosmetics
+  "MD060": false                          // Table column alignment — cosmetics
+}
