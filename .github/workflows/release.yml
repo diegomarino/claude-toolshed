@@ -91,6 +91,14 @@ jobs:
           echo "new_version=$MKT_NEW" >> "$GITHUB_OUTPUT"
           echo "bumped=$BUMPED" >> "$GITHUB_OUTPUT"
 
+      - name: Update changelogs
+        if: steps.detect.outputs.skip == 'false'
+        run: |
+          bash scripts/update-changelogs.sh \
+            "${{ steps.bump.outputs.new_version }}" \
+            "${{ steps.detect.outputs.last_tag }}" \
+            ${{ steps.detect.outputs.changed }}
+
       - name: Commit, tag, and push
         if: steps.detect.outputs.skip == 'false'
         run: |
@@ -99,7 +107,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .claude-plugin/ plugins/*/.claude-plugin/
+          git add .claude-plugin/ plugins/*/.claude-plugin/ CHANGELOG.md plugins/*/CHANGELOG.md
           git commit -m "release: v$VERSION ($BUMPED)"
           git tag "v$VERSION"
           git push origin main --tags
