@@ -8,6 +8,7 @@ See the [root README](../../README.md#merge-checks) for a quick overview.
 
 - [Install](#install)
 - [Commands](#commands)
+- [Scope selection](#scope-selection)
 - [How it works](#how-it-works)
   - [Phase 1 — Mechanical checks](#phase-1--mechanical-checks)
   - [Phase 2 — Reasoning agents](#phase-2--reasoning-agents)
@@ -33,18 +34,69 @@ See the [root README](../../README.md#merge-checks) for a quick overview.
 | `/merge-checks feature/auth` | Pre-merge: diff current branch vs `feature/auth` (or `main`) |
 | `/merge-checks 3` | Post-merge: audit the last 3 merge commits |
 | `/merge-checks` | Auto-detect: last merge commit or diff vs main |
+| `/merge-checks --uncommitted` | Review only uncommitted (staged + unstaged) changes |
+| `/merge-checks --all` | Review committed + uncommitted changes vs base |
+| `/merge-checks --recent=N` | Review only the last N commits |
+| `/merge-checks --today` | Review today's commits + uncommitted changes |
+| `/merge-checks --since=YYYY-MM-DD` | Review changes since a specific date |
+
+## Scope selection
+
+Before running the 13 checks, merge-checks gathers git context and determines what code to review. When the answer is obvious, it auto-proceeds with a one-line confirmation. When it's ambiguous, it asks.
+
+### How it decides
+
+A lightweight script (`gather-context.sh`) runs first and collects: current branch, commits ahead of base, uncommitted file counts, branch age, recent branches, and active worktrees. This takes ~100ms.
+
+**Auto-proceed (obvious cases):**
+
+| Situation | Default scope |
+| --- | --- |
+| Young feature branch with commits, no uncommitted changes | All branch commits vs base |
+| Feature branch with only uncommitted changes (no commits yet) | Uncommitted changes |
+| Main branch, no uncommitted changes | Post-merge, last 5 merges |
+| Explicit argument passed (e.g. `/merge-checks main`) | Respects the argument |
+
+**Ask the user (ambiguous cases):**
+
+| Situation | Why it's ambiguous |
+| --- | --- |
+| Feature branch with both committed and uncommitted changes | Could want any subset |
+| Mature branch (>3 days or >20 commits) | May only want recent work |
+| Main with uncommitted changes and merge history | Could want uncommitted or post-merge |
+| Another branch or worktree has fresher activity | May be on the wrong branch |
+
+### What the question looks like
+
+When the scope is ambiguous, you'll see a question like:
+
+> Branch 'feature/auth' has 47 commits (12 days) + 3 uncommitted files. What should I review?
+
+With options tailored to your situation — for example: "Everything vs origin/main", "Committed changes only", "Uncommitted changes only", "Recent work (last 5 commits)".
+
+### Cross-branch awareness
+
+If you're on `main` (or a cold branch) but another branch or worktree has recent activity, merge-checks will offer to review that work instead. This catches the common "wrong branch" scenario.
 
 ## How it works
 
-The plugin runs in 3 phases: pre-compute mechanical checks with bash scripts, dispatch AI reasoning agents for judgment-heavy checks, then compile and verify coverage.
+The plugin runs in 4 phases: select scope, pre-compute mechanical checks, dispatch AI reasoning agents, then compile and verify coverage.
+
+![merge-checks workflow](assets/activity-merge-checks-workflow.svg)
+
+### Phase 0 — Scope selection
+
+A lightweight context script (`gather-context.sh`) runs via `!` injection and collects git state in ~100ms. Claude reads the context and either auto-proceeds (obvious cases) or asks the user what to review (ambiguous cases). See [Scope selection](#scope-selection) above for details.
 
 ### Phase 1 — Mechanical checks
 
-A master script (`precompute.sh`) orchestrates 16 bash scripts that run before Claude reads any instructions. This uses Claude Code's `!` injection syntax so all data is available in context immediately.
+After scope is resolved, a master script (`precompute.sh`) orchestrates 16 bash scripts that run all mechanical checks.
+
+![script execution flow](assets/activity-script-execution.svg)
 
 The scripts:
 
-1. **Detect mode** — determines pre-merge (branch diff) or post-merge (N commits) from the argument
+1. **Detect mode** — determines pre-merge (branch diff) or post-merge (N commits) from the resolved scope
 2. **Detect features** — scans the project for applicable checks (tests, i18n, stories, migrations, etc.)
 3. **Build file manifest** — lists all ADDED and MODIFIED files in the diff
 4. **Run per-file checks** — parallel execution for stories, tests, shared types

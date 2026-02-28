@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 698.7239999999999 1598.8000000000002" width="698.7239999999999" height="1598.8000000000002" style="--bg:#FFFFFF;--fg:#27272A;background:var(--bg)">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+  text { font-family: 'Inter', system-ui, sans-serif; }
+  svg {
+    /* Derived from --bg and --fg (overridable via --line, --accent, etc.) */
+    --_text:          var(--fg);
+    --_text-sec:      var(--muted, color-mix(in srgb, var(--fg) 60%, var(--bg)));
+    --_text-muted:    var(--muted, color-mix(in srgb, var(--fg) 40%, var(--bg)));
+    --_text-faint:    color-mix(in srgb, var(--fg) 25%, var(--bg));
+    --_line:          var(--line, color-mix(in srgb, var(--fg) 50%, var(--bg)));
+    --_arrow:         var(--accent, color-mix(in srgb, var(--fg) 85%, var(--bg)));
+    --_node-fill:     var(--surface, color-mix(in srgb, var(--fg) 3%, var(--bg)));
+    --_node-stroke:   var(--border, color-mix(in srgb, var(--fg) 20%, var(--bg)));
+    --_group-fill:    var(--bg);
+    --_group-hdr:     color-mix(in srgb, var(--fg) 5%, var(--bg));
+    --_inner-stroke:  color-mix(in srgb, var(--fg) 12%, var(--bg));
+    --_key-badge:     color-mix(in srgb, var(--fg) 10%, var(--bg));
+  }
+</style>
+<defs>
+  <marker id="arrowhead" markerWidth="8" markerHeight="5" refX="7" refY="2.5" orient="auto">
+    <polygon points="0 0, 8 2.5, 0 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+  <marker id="arrowhead-start" markerWidth="8" markerHeight="5" refX="1" refY="2.5" orient="auto-start-reverse">
+    <polygon points="8 0, 0 2.5, 8 5" fill="var(--_arrow)" stroke="var(--_arrow)" stroke-width="0.75" stroke-linejoin="round" />
+  </marker>
+</defs>
+<g class="subgraph" data-id="Phase0" data-label="Phase 0 — Scope Selection (via ! injection)">
+  <rect x="165.82149999999996" y="40" width="450.667" height="130.7" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="165.82149999999996" y="40" width="450.667" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="177.82149999999996" y="54" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Phase 0 — Scope Selection (via ! injection)</text>
+</g>
+<g class="subgraph" data-id="Init" data-label="Initialization (precompute.sh)">
+  <rect x="205.09449999999993" y="287" width="372.12100000000004" height="147.60000000000002" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="205.09449999999993" y="287" width="372.12100000000004" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="217.09449999999993" y="301" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Initialization (precompute.sh)</text>
+</g>
+<g class="subgraph" data-id="Scope" data-label="Step 1 — Detect Scope">
+  <rect x="154.33599999999998" y="482.6" width="473.6379999999999" height="113.80000000000001" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="154.33599999999998" y="482.6" width="473.6379999999999" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="166.33599999999998" y="496.6" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Step 1 — Detect Scope</text>
+</g>
+<g class="subgraph" data-id="Features" data-label="Step 2 — Detect Features (9 detectors in parallel)">
+  <rect x="251.47499999999994" y="644.4000000000001" width="279.36" height="267.6" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="251.47499999999994" y="644.4000000000001" width="279.36" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="263.4749999999999" y="658.4000000000001" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Step 2 — Detect Features (9 detectors in parallel)</text>
+</g>
+<g class="subgraph" data-id="Manifest" data-label="Step 3 — File Manifest">
+  <rect x="184.71699999999996" y="960" width="412.876" height="130.7" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="184.71699999999996" y="960" width="412.876" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="196.71699999999996" y="974" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Step 3 — File Manifest</text>
+</g>
+<g class="subgraph" data-id="SeqChecks" data-label="Step 4a — Sequential Checks">
+  <rect x="40" y="1138.7" width="378.948" height="335.20000000000005" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="40" y="1138.7" width="378.948" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="52" y="1152.7" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Step 4a — Sequential Checks</text>
+</g>
+<g class="subgraph" data-id="ParChecks" data-label="Step 4b — Parallel Per-File Checks">
+  <rect x="446.948" y="1212.5" width="211.77599999999998" height="261.40000000000003" rx="0" ry="0" fill="var(--_group-fill)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <rect x="446.948" y="1212.5" width="211.77599999999998" height="28" rx="0" ry="0" fill="var(--_group-hdr)" stroke="var(--_node-stroke)" stroke-width="1" />
+  <text x="458.948" y="1226.5" font-size="12" font-weight="600" fill="var(--_text-sec)" dy="4.199999999999999">Step 4b — Parallel Per-File Checks</text>
+</g>
+<polyline class="edge" data-from="Phase0" data-to="Init" data-style="solid" data-arrow-start="false" data-arrow-end="true" data-label="precompute.sh" points="391.155,170.7 391.155,287" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="Init" data-to="Scope" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="391.155,434.6 391.155,482.6" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="Scope" data-to="Features" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="391.155,596.4000000000001 391.155,644.4000000000001" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="Features" data-to="Manifest" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="391.155,912.0000000000001 391.155,960" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="Manifest" data-to="SeqChecks" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="322.3423333333333,1090.7 322.3423333333333,1126.7 229.474,1126.7 229.474,1138.7" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="Manifest" data-to="ParChecks" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="459.9676666666667,1090.7 459.9676666666667,1200.5 552.8359999999999,1200.5 552.836,1212.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="SeqChecks" data-to="Output" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="229.474,1473.9 229.474,1509.9 337.7273333333334,1509.9 337.7273333333333,1521.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="ParChecks" data-to="Output" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="552.836,1473.9 552.8359999999999,1509.9 444.5826666666667,1509.9 444.5826666666666,1521.9" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="GC" data-to="Claude0" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="326.77049999999997,119.35 374.77049999999997,119.35" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="EnsureDeps" data-to="ParseArgs" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="357.15149999999994,374.8 405.15149999999994,374.8" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="DetectMode" data-to="ScopeOverride" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="364.1909999999999,553.5 412.1909999999999,553.5" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<polyline class="edge" data-from="BM" data-to="Caches" data-style="solid" data-arrow-start="false" data-arrow-end="true" points="370.1189999999999,1039.35 418.1189999999999,1039.35" fill="none" stroke="var(--_line)" stroke-width="1" marker-end="url(#arrowhead)" />
+<g class="edge-label" data-from="Phase0" data-to="Init" data-label="precompute.sh">
+  <rect x="347.155" y="213.7" width="87.74200000000002" height="30.3" rx="2" ry="2" fill="var(--bg)" stroke="var(--_inner-stroke)" stroke-width="1" />
+  <text x="391.02599999999995" y="228.85" text-anchor="middle" font-size="11" font-weight="400" fill="var(--_text-sec)" dy="3.8499999999999996">precompute.sh</text>
+</g>
+<g class="node" data-id="Output" data-label="Structured markdown output → Claude Phase 1–3" data-shape="rectangle">
+  <rect x="230.872" y="1521.9" width="320.5659999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="391.155" y="1540.3500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">Structured markdown output → Claude Phase 1–3</text>
+</g>
+<g class="node" data-id="GC" data-label="gather-context.sh
+git state ~100ms" data-shape="rectangle">
+  <rect x="181.82149999999996" y="92.45" width="144.949" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="254.29599999999996" y="119.35000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="254.29599999999996" dy="-3.9000000000000012">gather-context.sh</tspan><tspan x="254.29599999999996" dy="16.900000000000002">git state ~100ms</tspan></text>
+</g>
+<g class="node" data-id="Claude0" data-label="Claude reads context
+→ obvious: auto-proceed
+→ ambiguous: AskUserQuestion" data-shape="rectangle">
+  <rect x="374.77049999999997" y="84" width="225.71799999999996" height="70.7" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="487.62949999999995" y="119.35" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="487.62949999999995" dy="-12.350000000000001">Claude reads context</tspan><tspan x="487.62949999999995" dy="16.900000000000002">→ obvious: auto-proceed</tspan><tspan x="487.62949999999995" dy="16.900000000000002">→ ambiguous: AskUserQuestion</tspan></text>
+</g>
+<g class="node" data-id="EnsureDeps" data-label="ensure-deps.sh
+check git ≥ 2.30" data-shape="rectangle">
+  <rect x="221.09449999999993" y="347.9" width="136.05700000000002" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="289.12299999999993" y="374.79999999999995" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="289.12299999999993" dy="-3.9000000000000012">ensure-deps.sh</tspan><tspan x="289.12299999999993" dy="16.900000000000002">check git ≥ 2.30</tspan></text>
+</g>
+<g class="node" data-id="ParseArgs" data-label="Parse scope args
+--uncommitted · --all
+--recent=N · --today
+--since · --branch" data-shape="rectangle">
+  <rect x="405.15149999999994" y="331" width="156.06400000000002" height="87.60000000000001" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="483.1835" y="374.8" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="483.1835" dy="-20.8">Parse scope args</tspan><tspan x="483.1835" dy="16.900000000000002">--uncommitted · --all</tspan><tspan x="483.1835" dy="16.900000000000002">--recent=N · --today</tspan><tspan x="483.1835" dy="16.900000000000002">--since · --branch</tspan></text>
+</g>
+<g class="node" data-id="DetectMode" data-label="detect-mode.sh
+→ MODE, BASE, N, SCOPE" data-shape="rectangle">
+  <rect x="170.33599999999998" y="526.6" width="193.85499999999993" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="267.26349999999996" y="553.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="267.26349999999996" dy="-3.9000000000000012">detect-mode.sh</tspan><tspan x="267.26349999999996" dy="16.900000000000002">→ MODE, BASE, N, SCOPE</tspan></text>
+</g>
+<g class="node" data-id="ScopeOverride" data-label="Apply scope overrides
+adjust BASE &amp; DIFF_HEAD" data-shape="rectangle">
+  <rect x="412.1909999999999" y="526.6" width="199.78299999999996" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="512.0824999999999" y="553.5" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="512.0824999999999" dy="-3.9000000000000012">Apply scope overrides</tspan><tspan x="512.0824999999999" dy="16.900000000000002">adjust BASE &amp; DIFF_HEAD</tspan></text>
+</g>
+<g class="node" data-id="DF_S" data-label="stories" data-shape="rectangle">
+  <rect x="370.17999999999995" y="802.2" width="83.446" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="411.90299999999996" y="820.6500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">stories</text>
+</g>
+<g class="node" data-id="DF_SE" data-label="seeds" data-shape="rectangle">
+  <rect x="267.4749999999999" y="745.3000000000001" width="79" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="306.9749999999999" y="763.7500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">seeds</text>
+</g>
+<g class="node" data-id="DF_T" data-label="tests" data-shape="rectangle">
+  <rect x="350.17299999999994" y="688.4000000000001" width="70.108" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="385.227" y="706.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">tests</text>
+</g>
+<g class="node" data-id="DF_I" data-label="i18n" data-shape="rectangle">
+  <rect x="267.4749999999999" y="688.4000000000001" width="62.69799999999999" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="298.8239999999999" y="706.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">i18n</text>
+</g>
+<g class="node" data-id="DF_TY" data-label="typed" data-shape="rectangle">
+  <rect x="440.28099999999995" y="688.4000000000001" width="74.554" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="477.55799999999994" y="706.8500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">typed</text>
+</g>
+<g class="node" data-id="DF_M" data-label="migrations" data-shape="rectangle">
+  <rect x="267.4749999999999" y="859.1000000000001" width="102.712" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="318.8309999999999" y="877.5500000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">migrations</text>
+</g>
+<g class="node" data-id="DF_E" data-label="env file" data-shape="rectangle">
+  <rect x="267.4749999999999" y="802.2" width="82.705" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="308.82749999999993" y="820.6500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">env file</text>
+</g>
+<g class="node" data-id="DF_SH" data-label="shared pkg" data-shape="rectangle">
+  <rect x="390.1869999999999" y="859.1000000000001" width="109.381" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="444.8774999999999" y="877.5500000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">shared pkg</text>
+</g>
+<g class="node" data-id="DF_R" data-label="routes" data-shape="rectangle">
+  <rect x="366.4749999999999" y="745.3000000000001" width="80.482" height="36.900000000000006" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="406.7159999999999" y="763.7500000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)" dy="4.55">routes</text>
+</g>
+<g class="node" data-id="BM" data-label="build-manifest.sh
+git diff --name-only
+→ ADDED + MODIFIED" data-shape="rectangle">
+  <rect x="200.71699999999996" y="1004" width="169.402" height="70.7" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="285.41799999999995" y="1039.35" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="285.41799999999995" dy="-12.350000000000001">build-manifest.sh</tspan><tspan x="285.41799999999995" dy="16.900000000000002">git diff --name-only</tspan><tspan x="285.41799999999995" dy="16.900000000000002">→ ADDED + MODIFIED</tspan></text>
+</g>
+<g class="node" data-id="Caches" data-label="Pre-compute caches
+orchestrators.txt
+bootstraps.txt" data-shape="rectangle">
+  <rect x="418.1189999999999" y="1004" width="163.474" height="70.7" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="499.8559999999999" y="1039.35" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="499.8559999999999" dy="-12.350000000000001">Pre-compute caches</tspan><tspan x="499.8559999999999" dy="16.900000000000002">orchestrators.txt</tspan><tspan x="499.8559999999999" dy="16.900000000000002">bootstraps.txt</tspan></text>
+</g>
+<g class="node" data-id="Debug" data-label="check-debug-
+artifacts.sh" data-shape="rectangle">
+  <rect x="56" y="1256.5" width="123.46" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="117.72999999999999" y="1283.4" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="117.72999999999999" dy="-3.9000000000000012">check-debug-</tspan><tspan x="117.72999999999999" dy="16.900000000000002">artifacts.sh</tspan></text>
+</g>
+<g class="node" data-id="Supp" data-label="detect-
+suppressions.sh" data-shape="rectangle">
+  <rect x="56" y="1404.1000000000001" width="142.726" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="127.363" y="1431.0000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="127.363" dy="-3.9000000000000012">detect-</tspan><tspan x="127.363" dy="16.900000000000002">suppressions.sh</tspan></text>
+</g>
+<g class="node" data-id="Env" data-label="check-env-coverage.sh
+↳ detect-env-vars.sh" data-shape="rectangle">
+  <rect x="218.726" y="1404.1000000000001" width="184.22199999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="310.837" y="1431.0000000000002" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="310.837" dy="-3.9000000000000012">check-env-coverage.sh</tspan><tspan x="310.837" dy="16.900000000000002">↳ detect-env-vars.sh</tspan></text>
+</g>
+<g class="node" data-id="I18n" data-label="list-hardcoded-
+strings.sh" data-shape="rectangle">
+  <rect x="199.45999999999998" y="1256.5" width="130.87" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="264.895" y="1283.4" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="264.895" dy="-3.9000000000000012">list-hardcoded-</tspan><tspan x="264.895" dy="16.900000000000002">strings.sh</tspan></text>
+</g>
+<g class="node" data-id="I18nCon" data-label="check-i18n-
+consistency.sh" data-shape="rectangle">
+  <rect x="56" y="1330.3000000000002" width="132.352" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="122.176" y="1357.2000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="122.176" dy="-3.9000000000000012">check-i18n-</tspan><tspan x="122.176" dy="16.900000000000002">consistency.sh</tspan></text>
+</g>
+<g class="node" data-id="Routes" data-label="check-route-
+registered.sh" data-shape="rectangle">
+  <rect x="192.05" y="1182.7" width="121.97799999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="253.039" y="1209.6000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="253.039" dy="-3.9000000000000012">check-route-</tspan><tspan x="253.039" dy="16.900000000000002">registered.sh</tspan></text>
+</g>
+<g class="node" data-id="Migrate" data-label="check-migration-
+exists.sh" data-shape="rectangle">
+  <rect x="208.352" y="1330.3000000000002" width="139.762" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="278.233" y="1357.2000000000003" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="278.233" dy="-3.9000000000000012">check-migration-</tspan><tspan x="278.233" dy="16.900000000000002">exists.sh</tspan></text>
+</g>
+<g class="node" data-id="Seeds" data-label="check-seed-
+imported.sh" data-shape="rectangle">
+  <rect x="56" y="1182.7" width="116.05" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="114.025" y="1209.6000000000001" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="114.025" dy="-3.9000000000000012">check-seed-</tspan><tspan x="114.025" dy="16.900000000000002">imported.sh</tspan></text>
+</g>
+<g class="node" data-id="Stories" data-label="check-story-exists.sh
+(per component)" data-shape="rectangle">
+  <rect x="462.948" y="1330.3" width="170.884" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="548.39" y="1357.2" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="548.39" dy="-3.9000000000000012">check-story-exists.sh</tspan><tspan x="548.39" dy="16.900000000000002">(per component)</tspan></text>
+</g>
+<g class="node" data-id="Tests" data-label="check-test-exists.sh
+(per source file)" data-shape="rectangle">
+  <rect x="462.948" y="1256.5" width="160.51" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="543.203" y="1283.4" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="543.203" dy="-3.9000000000000012">check-test-exists.sh</tspan><tspan x="543.203" dy="16.900000000000002">(per source file)</tspan></text>
+</g>
+<g class="node" data-id="Shared" data-label="check-shared-types.sh
+(per source file)" data-shape="rectangle">
+  <rect x="462.948" y="1404.1" width="179.77599999999998" height="53.800000000000004" rx="0" ry="0" fill="var(--_node-fill)" stroke="var(--_node-stroke)" stroke-width="0.75" />
+  <text x="552.836" y="1431" text-anchor="middle" font-size="13" font-weight="500" fill="var(--_text)"><tspan x="552.836" dy="-3.9000000000000012">check-shared-types.sh</tspan><tspan x="552.836" dy="16.900000000000002">(per source file)</tspan></text>
+</g>
+</svg>

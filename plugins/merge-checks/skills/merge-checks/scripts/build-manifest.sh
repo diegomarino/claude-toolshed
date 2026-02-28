@@ -13,14 +13,14 @@
 set -euo pipefail
 
 BASE="${1:?Usage: build-manifest.sh <base-ref> [head-ref]}"
-HEAD="${2:-HEAD}"
+HEAD="${2:-}"
 
 # Files to exclude from review (auto-generated, lock files, build outputs)
 EXCLUDE_PATTERN='(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|\.lock$|routeTree\.gen\.ts|\.min\.(js|css)$|dist/|\.next/|build/|__pycache__/|\.pyc$|node_modules/|\.env$|\.env\.[^e])'
 
 get_files() {
   local filter="$1"
-  git diff "$BASE" "$HEAD" --name-only --diff-filter="$filter" 2>/dev/null \
+  git diff "$BASE" ${HEAD:+"$HEAD"} --name-only --diff-filter="$filter" 2>/dev/null \
     | grep -Ev "$EXCLUDE_PATTERN" \
     | sort \
     || true
@@ -35,6 +35,7 @@ echo "FILE_MANIFEST"
 echo "============="
 echo "ADDED:"
 if [[ -n "$ADDED" ]]; then
+  # shellcheck disable=SC2001 # sed is clearer for prepending indent to multi-line output
   echo "$ADDED" | sed 's/^/  /'
 else
   echo "  (none)"
@@ -42,6 +43,7 @@ fi
 echo ""
 echo "MODIFIED:"
 if [[ -n "$MODIFIED" ]]; then
+  # shellcheck disable=SC2001
   echo "$MODIFIED" | sed 's/^/  /'
 else
   echo "  (none)"

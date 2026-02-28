@@ -1,0 +1,71 @@
+flowchart TD
+    subgraph Phase0["Phase 0 — Scope Selection (via ! injection)"]
+        direction LR
+        GC["gather-context.sh<br/>git state ~100ms"]
+        Claude0["Claude reads context<br/>→ obvious: auto-proceed<br/>→ ambiguous: AskUserQuestion"]
+        GC --> Claude0
+    end
+
+    subgraph Init["Initialization (precompute.sh)"]
+        direction LR
+        EnsureDeps["ensure-deps.sh<br/>check git ≥ 2.30"]
+        ParseArgs["Parse scope args<br/>--uncommitted · --all<br/>--recent=N · --today<br/>--since · --branch"]
+        EnsureDeps --> ParseArgs
+    end
+
+    subgraph Scope["Step 1 — Detect Scope"]
+        direction LR
+        DetectMode["detect-mode.sh<br/>→ MODE, BASE, N, SCOPE"]
+        ScopeOverride["Apply scope overrides<br/>adjust BASE & DIFF_HEAD"]
+        DetectMode --> ScopeOverride
+    end
+
+    subgraph Features["Step 2 — Detect Features (9 detectors in parallel)"]
+        direction LR
+        DF_S["stories"]
+        DF_SE["seeds"]
+        DF_T["tests"]
+        DF_I["i18n"]
+        DF_TY["typed"]
+        DF_M["migrations"]
+        DF_E["env file"]
+        DF_SH["shared pkg"]
+        DF_R["routes"]
+    end
+
+    subgraph Manifest["Step 3 — File Manifest"]
+        direction LR
+        BM["build-manifest.sh<br/>git diff --name-only<br/>→ ADDED + MODIFIED"]
+        Caches["Pre-compute caches<br/>orchestrators.txt<br/>bootstraps.txt"]
+        BM --> Caches
+    end
+
+    subgraph SeqChecks["Step 4a — Sequential Checks"]
+        direction LR
+        Debug["check-debug-<br/>artifacts.sh"]
+        Supp["detect-<br/>suppressions.sh"]
+        Env["check-env-coverage.sh<br/>↳ detect-env-vars.sh"]
+        I18n["list-hardcoded-<br/>strings.sh"]
+        I18nCon["check-i18n-<br/>consistency.sh"]
+        Routes["check-route-<br/>registered.sh"]
+        Migrate["check-migration-<br/>exists.sh"]
+        Seeds["check-seed-<br/>imported.sh"]
+    end
+
+    subgraph ParChecks["Step 4b — Parallel Per-File Checks"]
+        direction LR
+        Stories["check-story-exists.sh<br/>(per component)"]
+        Tests["check-test-exists.sh<br/>(per source file)"]
+        Shared["check-shared-types.sh<br/>(per source file)"]
+    end
+
+    Output["Structured markdown output → Claude Phase 1–3"]
+
+    Phase0 -->|"precompute.sh"| Init
+    Init --> Scope
+    Scope --> Features
+    Features --> Manifest
+    Manifest --> SeqChecks
+    Manifest --> ParChecks
+    SeqChecks --> Output
+    ParChecks --> Output

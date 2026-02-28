@@ -6,9 +6,15 @@
 # all data is pre-computed before Claude reads any instructions.
 #
 # Usage:
-#   bash precompute.sh          # auto-detect (last merge or diff vs main)
-#   bash precompute.sh 3        # post-merge: last 3 merge commits
-#   bash precompute.sh main     # pre-merge: diff of current branch vs main
+#   bash precompute.sh              # auto-detect (last merge or diff vs main)
+#   bash precompute.sh 3            # post-merge: last 3 merge commits
+#   bash precompute.sh main         # pre-merge: diff of current branch vs main
+#   bash precompute.sh --uncommitted  # uncommitted changes only
+#   bash precompute.sh --all          # committed + uncommitted vs base
+#   bash precompute.sh --recent=N     # last N commits only
+#   bash precompute.sh --today        # today's commits + uncommitted
+#   bash precompute.sh --since=DATE   # changes since DATE (YYYY-MM-DD)
+#   bash precompute.sh --branch=X     # review branch X from current position
 
 set -euo pipefail
 
@@ -17,6 +23,48 @@ SCRIPTS="$(cd "$(dirname "$0")" && pwd)"
 # ── Dependency check ──────────────────────────────────────────────────────────
 bash "$SCRIPTS/ensure-deps.sh"
 ARG="${1:-}"
+
+# ── Parse extended scope arguments ───────────────────────────────────────────
+# DIFF_HEAD controls what the diff endpoint is:
+#   "HEAD"  = committed changes only (default, current behavior)
+#   ""      = include working tree (uncommitted changes)
+DIFF_HEAD="HEAD"
+SCOPE_OVERRIDE=""
+RECENT_N=""
+SINCE_DATE=""
+
+case "${ARG}" in
+  --uncommitted)
+    DIFF_HEAD=""
+    SCOPE_OVERRIDE="uncommitted"
+    ARG=""
+    ;;
+  --all)
+    DIFF_HEAD=""
+    SCOPE_OVERRIDE="all"
+    ARG=""
+    ;;
+  --recent=*)
+    RECENT_N="${ARG#--recent=}"
+    DIFF_HEAD="HEAD"
+    SCOPE_OVERRIDE="recent"
+    ARG=""
+    ;;
+  --today)
+    DIFF_HEAD=""
+    SCOPE_OVERRIDE="today"
+    ARG=""
+    ;;
+  --since=*)
+    SINCE_DATE="${ARG#--since=}"
+    DIFF_HEAD=""
+    SCOPE_OVERRIDE="since"
+    ARG=""
+    ;;
+  --branch=*)
+    ARG="${ARG#--branch=}"
+    ;;
+esac
 
 MC_TMP="${TMPDIR:-/tmp}/merge-checks-$$"
 mkdir -p "$MC_TMP"
@@ -48,6 +96,52 @@ _mode=$(run_required detect-mode.sh "$ARG")
 eval "$(printf '%s\n' "$_mode" | grep -E '^(MODE|BASE|N)=')"
 SCOPE=$(printf '%s\n' "$_mode" | grep '^SCOPE=' | sed 's/^SCOPE=//')
 
+# ── Apply scope overrides ────────────────────────────────────────────────────
+case "$SCOPE_OVERRIDE" in
+  uncommitted)
+    BASE="HEAD"
+    DIFF_HEAD=""
+    SCOPE="uncommitted changes"
+    MODE="uncommitted"
+    ;;
+  all)
+    # Keep BASE from detect-mode, but diff against working tree
+    DIFF_HEAD=""
+    SCOPE="all changes (committed + uncommitted) vs ${BASE:-HEAD~1}"
+    MODE="pre-merge"
+    ;;
+  recent)
+    BASE="HEAD~${RECENT_N}"
+    DIFF_HEAD="HEAD"
+    SCOPE="last ${RECENT_N} commits"
+    MODE="pre-merge"
+    ;;
+  today)
+    # Find the first commit of today; use its parent as BASE
+    _today_start=$(date +%Y-%m-%dT00:00:00 2>/dev/null || date -u +%Y-%m-%dT00:00:00)
+    _first_today=$(git log --after="$_today_start" --format=%H --reverse 2>/dev/null | head -1)
+    if [[ -n "$_first_today" ]]; then
+      BASE="${_first_today}~1"
+    else
+      BASE="HEAD"
+    fi
+    DIFF_HEAD=""
+    SCOPE="today's work (commits + uncommitted)"
+    MODE="pre-merge"
+    ;;
+  since)
+    _first_after=$(git log --after="${SINCE_DATE}T00:00:00" --format=%H --reverse 2>/dev/null | head -1)
+    if [[ -n "$_first_after" ]]; then
+      BASE="${_first_after}~1"
+    else
+      BASE="HEAD"
+    fi
+    DIFF_HEAD=""
+    SCOPE="changes since ${SINCE_DATE}"
+    MODE="pre-merge"
+    ;;
+esac
+
 echo "## SCOPE"
 echo "MODE=${MODE:-unknown}  BASE=${BASE:-HEAD~1}  N=${N:-}  SCOPE=${SCOPE:-}"
 echo ""
@@ -72,7 +166,7 @@ echo ""
 # ─────────────────────────────────────────────────────────────────────────────
 # 3. FILE MANIFEST
 # ─────────────────────────────────────────────────────────────────────────────
-run_required build-manifest.sh "${BASE:-HEAD~1}" > "$MC_TMP/manifest.txt"
+run_required build-manifest.sh "${BASE:-HEAD~1}" "$DIFF_HEAD" > "$MC_TMP/manifest.txt"
 
 echo "## FILE MANIFEST"
 cat "$MC_TMP/manifest.txt"
@@ -148,18 +242,18 @@ echo ""
 
 # ── 4a. Debug artifacts ───────────────────────────────────────────────────────
 echo "### debug-artifacts"
-run_check check-debug-artifacts.sh "${BASE:-HEAD~1}"
+run_check check-debug-artifacts.sh "${BASE:-HEAD~1}" "$DIFF_HEAD"
 echo ""
 
 # ── 4b. Type suppressions ─────────────────────────────────────────────────────
 echo "### suppressions"
-run_check detect-suppressions.sh "${BASE:-HEAD~1}"
+run_check detect-suppressions.sh "${BASE:-HEAD~1}" "$DIFF_HEAD"
 echo ""
 
 # ── 4c. Env variable coverage ─────────────────────────────────────────────────
 echo "### env-coverage"
 if [[ -n "${ENV_FILE:-}" ]] && [[ -f "${ENV_FILE}" ]]; then
-  run_check check-env-coverage.sh "${ENV_FILE}" "${BASE:-HEAD~1}"
+  run_check check-env-coverage.sh "${ENV_FILE}" "${BASE:-HEAD~1}" "$DIFF_HEAD"
 else
   echo "  (no .env.example found — skipped)"
 fi
@@ -275,7 +369,7 @@ if [[ "${MIGRATIONS:-false}" == "true" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
     [[ "$_file" =~ /models/[^/]+\.(ts|js|py|rb)$ ]] || \
     [[ "$_file" =~ schema\.prisma$               ]] || continue
     [[ -f "$_file" ]] || continue
-    run_check check-migration-exists.sh "$_file" "${BASE:-HEAD~1}"
+    run_check check-migration-exists.sh "$_file" "${BASE:-HEAD~1}" "$DIFF_HEAD"
     _found_schema=true
   done
   [[ "$_found_schema" == false ]] && echo "  (no schema files changed)"
@@ -306,7 +400,7 @@ if [[ -n "${SHARED_PKG:-}" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
   _shpids=() && _shi=0
   for _file in "${ALL_FILES[@]}"; do
     [[ "$_file" =~ \.(ts|tsx|py)$ ]]   || continue
-    [[ "$_file" =~ "$SHARED_PKG" ]]    && continue  # already in shared
+    [[ "$_file" == *"$SHARED_PKG"* ]]  && continue  # already in shared
     [[ "$_file" =~ \.(test|spec)\. ]]  && continue
     [[ "$_file" =~ \.stories\. ]]      && continue
     [[ -f "$_file" ]] || continue

@@ -1,9 +1,8 @@
 ---
 name: merge-checks
 description: Audit code changes across 13 quality dimensions before or after merge
-disable-model-invocation: true
-argument-hint: [branch-or-number-of-merges]
-allowed-tools: Bash, Read, Write, Task
+argument-hint: [scope-argument]
+allowed-tools: Bash, Read, Write, Task, AskUserQuestion
 model: opus
 ---
 
@@ -12,16 +11,95 @@ model: opus
 Audit code changes before or after a merge across 13 quality dimensions.
 Output: a prioritized task list grouped by file, ready to act on.
 
-## Pre-computed analysis
+## Git context
 
-!`bash -c 'script="$(find $HOME/.claude/plugins/cache -name precompute.sh -path "*/merge-checks/*" 2>/dev/null | head -1)"; if [ -z "$script" ]; then echo "ERROR: merge-checks precompute.sh not found. Try reinstalling the plugin."; exit 1; fi; bash "$script" '"$ARGUMENTS"`
+!`bash -c 'script="$(find $HOME/.claude/plugins/cache -name gather-context.sh -path "*/merge-checks/*" 2>/dev/null | head -1)"; if [ -z "$script" ]; then echo "ERROR: merge-checks gather-context.sh not found. Try reinstalling the plugin."; exit 1; fi; bash "$script" '"$ARGUMENTS"`
+
+---
+
+## Phase 0 — Scope selection
+
+Read the CONTEXT block above and determine what code to review. Then run the full analysis via `precompute.sh`.
+
+**Step 1: If an explicit argument was passed, auto-proceed.**
+
+If `ARGUMENT` is non-empty, show a one-line scope confirmation and run precompute:
+
+```
+"Scope: [description based on argument]"
+```
+
+Then run precompute via Bash (find the script the same way gather-context.sh was found, but search for `precompute.sh`):
+
+```bash
+bash "$precompute_script" "$ARGUMENT"
+```
+
+Skip to Phase 1.
+
+**Step 2: Compute signals from CONTEXT.**
+
+```
+has_committed    = COMMITS_AHEAD > 0
+has_uncommitted  = UNCOMMITTED_TOTAL > 0
+is_mature        = BRANCH_AGE_HOURS > 72 OR COMMITS_AHEAD > 20
+has_other_work   = RECENT BRANCHES or ACTIVE WORKTREES have activity < 24h old
+                   AND current branch is cold (LAST_COMMIT_HOURS_AGO > 24 AND !has_uncommitted)
+```
+
+**Step 3: Obvious cases — auto-proceed with scope message.**
+
+| Condition | Scope message | precompute.sh args |
+|---|---|---|
+| Feature + has_committed + !has_uncommitted + !is_mature | "Scope: all N commits on BRANCH vs BASE (X lines)" | `BASE` |
+| Feature + !has_committed + has_uncommitted | "Scope: uncommitted changes on BRANCH (N files)" | `--uncommitted` |
+| Main + !has_uncommitted + !has_other_work | "Scope: post-merge, last 5 merges on BRANCH" | *(no args)* |
+| Main + has_uncommitted + RECENT_MERGES=0 + !has_other_work | "Scope: uncommitted changes on BRANCH (N files)" | `--uncommitted` |
+
+Show the scope message, run precompute via Bash, skip to Phase 1.
+
+**Step 4: Ambiguous cases — ask the user.**
+
+Triggers:
+
+- Feature + has_committed + has_uncommitted
+- Feature + has_committed + is_mature (even without uncommitted)
+- Main + has_uncommitted + RECENT_MERGES > 0
+- Any branch + has_other_work
+
+Use AskUserQuestion with `header: "Review scope"` and a descriptive question that includes branch name, commit count, age, and uncommitted count from the CONTEXT.
+
+Build 2-4 options dynamically from this pool (only include relevant ones):
+
+| Option | When to include | precompute.sh args |
+|---|---|---|
+| "Everything vs BASE — N commits + uncommitted (X lines since DATE)" | has_committed AND has_uncommitted | `--all` |
+| "Committed changes only — N commits vs BASE" | has_committed AND has_uncommitted | `BASE` |
+| "Uncommitted changes only — N files (staged + unstaged)" | has_uncommitted | `--uncommitted` |
+| "Recent work — last N commits (since DATE)" | is_mature, N = min(5, COMMITS_AHEAD) | `--recent=N` |
+| "Since last merge-check (DATE)" | HAS_PREVIOUS_REPORT=true | `--since=PREVIOUS_REPORT_DATE` |
+| "Today's work — N commits + uncommitted" | LAST_COMMIT_HOURS_AGO < 24 AND is_mature | `--today` |
+| "Switch to BRANCH — N commits, last activity Xh ago" | has_other_work, from RECENT BRANCHES | `--branch=BRANCH` |
+| "Review worktree BRANCH at PATH" | has_other_work, from ACTIVE WORKTREES | run `cd PATH && precompute.sh` |
+
+Map the user's selection to the corresponding precompute.sh invocation. Run it via Bash.
+
+**Step 5: Run precompute.sh**
+
+Find and execute the script:
+
+```bash
+script="$(find $HOME/.claude/plugins/cache -name precompute.sh -path '*/merge-checks/*' 2>/dev/null | head -1)"
+bash "$script" [ARGS]
+```
+
+The output contains all mechanical findings. Proceed to Phase 1.
 
 ---
 
 ## Instructions
 
-All mechanical findings are already in the pre-computed data above.
-Work through three phases: classify script findings, dispatch reasoning agents, compile report.
+Work through three phases: classify the precompute findings, dispatch reasoning agents, compile report.
 
 **Severity levels:**
 
@@ -43,7 +121,7 @@ path/to/file.ext — 2 issues:
 
 ## Phase 1 — Classify pre-computed findings
 
-Read each section of the pre-computed data and produce issues. File reads are only needed for `### suppressions` (to verify justification comments).
+Read each section of the precompute output (from Phase 0) and produce issues. File reads are only needed for `### suppressions` (to verify justification comments).
 
 **`### debug-artifacts`** (Check 11)
 
@@ -176,7 +254,8 @@ Sort: 🔴 → 🟡 → 🔵 within each file. Files with most issues first.
 
 | Mistake | Fix |
 |---------|-----|
-| Pre-computed script not found | Plugin is not installed or cache is stale — reinstall with `/plugin install merge-checks@claude-toolshed` |
+| gather-context.sh or precompute.sh not found | Plugin is not installed or cache is stale — reinstall with `/plugin install merge-checks@claude-toolshed` |
+| Skipping Phase 0 and running precompute directly | Always go through Phase 0 — it determines the correct scope and runs precompute for you |
 | Phase 2 agents do not cover all files after 1 retry | Mark remaining files as `[not-reviewed]` per 3b — do not dispatch a second retry |
 | Reading check files with Bash instead of Read tool | Use the Read tool for `checks/docs.md`, `checks/comments.md`, `checks/shared.md` — it's in `allowed-tools` |
 | Classifying `shared-types` in Phase 1 | Skip it — the `shared-types` section is handled by Agent C in Phase 2 |

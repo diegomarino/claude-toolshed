@@ -1,0 +1,57 @@
+flowchart TD
+    Start(["/merge-checks invoked"])
+
+    subgraph Phase0["Phase 0 — Scope Selection"]
+        direction LR
+        GC["⚙️ gather-context.sh<br/>~100ms git state"]
+        HasArg{Explicit<br/>argument?}
+        Obvious{Obvious<br/>case?}
+        Ask["📨 AskUserQuestion<br/>tailored options"]
+        Scope["💾 Scope resolved"]
+
+        GC --> HasArg
+        HasArg -->|Yes| Scope
+        HasArg -->|No| Obvious
+        Obvious -->|Auto-proceed| Scope
+        Obvious -->|Ambiguous| Ask
+        Ask --> Scope
+    end
+
+    subgraph Phase1["Phase 1 — Mechanical Checks"]
+        direction LR
+        Precompute["⚙️ precompute.sh"]
+        DetectMode["detect-mode"]
+        DetectFeatures["detect-features"]
+        Manifest["build-manifest"]
+        Parallel1["⚙️ Per-file checks<br/>stories · tests · i18n · debug<br/>suppressions · env · routes<br/>migrations · seeds · shared"]
+
+        Precompute --> DetectMode --> DetectFeatures --> Manifest --> Parallel1
+    end
+
+    subgraph Phase2["Phase 2 — Reasoning Agents (concurrent)"]
+        direction LR
+        AgentA["🤖 A — Docs"]
+        AgentB["🤖 B — Comments"]
+        AgentC["🤖 C — Shared contracts"]
+    end
+
+    subgraph Phase3["Phase 3 — Compile with Retry"]
+        direction LR
+        Aggregate["⚙️ Aggregate<br/>Phase 1 + Phase 2"]
+        Coverage{Coverage<br/>gaps?}
+        Retry["🔄 Retry<br/>missed files"]
+        Format["⚙️ Format<br/>sort by severity"]
+
+        Aggregate --> Coverage
+        Coverage -->|No gaps| Format
+        Coverage -->|Files missed| Retry
+        Retry --> Aggregate
+    end
+
+    Report(["✅ Prioritized issue report grouped by file"])
+
+    Start --> Phase0
+    Phase0 --> Phase1
+    Phase1 --> Phase2
+    Phase2 --> Phase3
+    Phase3 --> Report

@@ -15,7 +15,7 @@
 set -euo pipefail
 
 BASE="${1:?Usage: detect-suppressions.sh <base-ref> [head-ref]}"
-HEAD="${2:-HEAD}"
+HEAD="${2:-}"
 
 # Step 1: use awk to emit "file:line <TAB> content" for every added line.
 # Step 2: grep to filter only lines that contain suppression patterns.
@@ -24,7 +24,7 @@ HEAD="${2:-HEAD}"
 # Note: awk handles file/line tracking; grep handles the pattern matching.
 # This avoids passing complex regex to awk (BSD awk doesn't support \b, \(, etc.)
 
-git diff "$BASE" "$HEAD" --unified=0 | awk '
+git diff "$BASE" ${HEAD:+"$HEAD"} --unified=0 | awk '
   /^diff --git / {
     f = $0; sub(/^diff --git a\/.+ b\//, "", f)
     cur_file = f; hunk_line = 0; offset = 0

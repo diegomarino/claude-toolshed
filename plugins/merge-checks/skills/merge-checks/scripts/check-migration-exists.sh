@@ -17,7 +17,7 @@ set -euo pipefail
 
 SCHEMA="${1:?Usage: check-migration-exists.sh <schema-filepath> <base-ref> [head-ref]}"
 BASE="${2:?Usage: check-migration-exists.sh <schema-filepath> <base-ref> [head-ref]}"
-HEAD="${3:-HEAD}"
+HEAD="${3:-}"
 
 if [[ ! -f "$SCHEMA" ]]; then
   echo "SKIP: $SCHEMA not found in working tree"
@@ -25,7 +25,7 @@ if [[ ! -f "$SCHEMA" ]]; then
 fi
 
 # Check if schema was actually changed in this diff
-if ! git diff "$BASE" "$HEAD" --name-only | grep -qF "$SCHEMA"; then
+if ! git diff "$BASE" ${HEAD:+"$HEAD"} --name-only | grep -qF "$SCHEMA"; then
   echo "SKIP: $SCHEMA not changed in this diff"
   exit 0
 fi
@@ -48,7 +48,7 @@ if [[ ${#MIGRATION_DIRS[@]} -eq 0 ]]; then
 fi
 
 # Get the commit time of the schema file's last change before HEAD
-SCHEMA_CHANGED_AT=$(git log -1 --format="%at" "$HEAD" -- "$SCHEMA" 2>/dev/null || echo 0)
+SCHEMA_CHANGED_AT=$(git log -1 --format="%at" ${HEAD:+"$HEAD"} -- "$SCHEMA" 2>/dev/null || echo 0)
 
 # Find the newest migration file
 NEWEST_MIGRATION=""
@@ -56,7 +56,7 @@ NEWEST_TIME=0
 for dir in "${MIGRATION_DIRS[@]}"; do
   while IFS= read -r migration; do
     # Get commit time of this migration
-    MT=$(git log -1 --format="%at" "$HEAD" -- "$migration" 2>/dev/null || echo 0)
+    MT=$(git log -1 --format="%at" ${HEAD:+"$HEAD"} -- "$migration" 2>/dev/null || echo 0)
     if (( MT > NEWEST_TIME )); then
       NEWEST_TIME="$MT"
       NEWEST_MIGRATION="$migration"

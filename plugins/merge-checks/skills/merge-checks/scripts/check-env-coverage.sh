@@ -21,7 +21,7 @@ set -euo pipefail
 
 ENV_FILE="${1:?Usage: check-env-coverage.sh <env-example-file> <base-ref> [head-ref]}"
 BASE="${2:?Usage: check-env-coverage.sh <env-example-file> <base-ref> [head-ref]}"
-HEAD="${3:-HEAD}"
+HEAD="${3:-}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -34,7 +34,7 @@ fi
 DECLARED=$(grep -E '^[A-Z_][A-Z0-9_]*=' "$ENV_FILE" 2>/dev/null | cut -d= -f1 | sort -u)
 
 # Get referenced variable names from the diff (reuse detect-env-vars.sh)
-REFERENCED_RAW=$("$SCRIPT_DIR/detect-env-vars.sh" "$BASE" "$HEAD" 2>/dev/null)
+REFERENCED_RAW=$("$SCRIPT_DIR/detect-env-vars.sh" "$BASE" ${HEAD:+"$HEAD"} 2>/dev/null)
 
 if [[ -z "$REFERENCED_RAW" ]] || [[ "$REFERENCED_RAW" == *"(none)"* ]]; then
   echo "OK: No new environment variable references found in diff"

@@ -99,8 +99,8 @@ detect_i18n() {
 
   # Single find+grep pass to avoid running the expensive xargs grep twice
   local tool
-  tool=$(find . -name "package.json" -not -path "*/node_modules/*" -maxdepth 4 2>/dev/null \
-    | xargs grep -hE '"(i18next|react-intl|vue-i18n|@formatjs|next-intl|lingui)"' 2>/dev/null \
+  tool=$(find . -name "package.json" -not -path "*/node_modules/*" -maxdepth 4 -exec \
+    grep -hE '"(i18next|react-intl|vue-i18n|@formatjs|next-intl|lingui)"' {} + 2>/dev/null \
     | grep -oE 'i18next|react-intl|vue-i18n|next-intl|lingui' | head -1)
 
   if [[ -n "$i18n_dir" ]]; then

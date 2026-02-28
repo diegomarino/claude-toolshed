@@ -20,11 +20,11 @@
 set -euo pipefail
 
 BASE="${1:?Usage: detect-env-vars.sh <base-ref> [head-ref]}"
-HEAD="${2:-HEAD}"
+HEAD="${2:-}"
 
 # Extract only added lines from the diff, then grep for env var patterns.
 # Each pattern extracts the variable name as the trailing [A-Z_]+ segment.
-git diff "$BASE" "$HEAD" --unified=0 \
+git diff "$BASE" ${HEAD:+"$HEAD"} --unified=0 \
   | grep '^+[^+]' \
   | grep -oE \
       'process\.env\.[A-Z_][A-Z0-9_]+|import\.meta\.env\.[A-Z_][A-Z0-9_]+|os\.getenv\("[A-Z_][A-Z0-9_]+|os\.environ\[[^]]*[A-Z_][A-Z0-9_]+|os\.environ\.get\("[A-Z_][A-Z0-9_]+|ENV\["[A-Z_][A-Z0-9_]+|ENV\.fetch\("[A-Z_][A-Z0-9_]+|os\.Getenv\("[A-Z_][A-Z0-9_]+|env::var\("[A-Z_][A-Z0-9_]+|System\.getenv\("[A-Z_][A-Z0-9_]+' \

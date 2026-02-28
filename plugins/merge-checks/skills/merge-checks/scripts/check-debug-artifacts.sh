@@ -17,9 +17,9 @@
 set -euo pipefail
 
 BASE="${1:?Usage: check-debug-artifacts.sh <base-ref> [head-ref]}"
-HEAD="${2:-HEAD}"
+HEAD="${2:-}"
 
-git diff "$BASE" "$HEAD" --unified=0 | awk '
+git diff "$BASE" ${HEAD:+"$HEAD"} --unified=0 | awk '
   # Track file and line numbers
   /^diff --git / {
     f = $0; sub(/^diff --git a\/.+ b\//, "", f)

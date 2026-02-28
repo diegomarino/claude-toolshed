@@ -48,6 +48,7 @@ grep -nE \
   "$SOURCE" 2>/dev/null | while IFS=: read -r linenum content; do
 
   # Skip lines that are already inside a translation call
+  # shellcheck disable=SC2016 # $t is a Vue i18n function, not a variable
   if echo "$content" | grep -qE '\bt\(|i18n\.t\(|\$t\(|gettext\(|__\(|formatMessage\('; then
     continue
   fi
