@@ -23,10 +23,11 @@ claude-toolshed/
 │   ├── dev-setup/
 │   └── trim-md/
 ├── scripts/
-│   └── release.sh                # version bump + tag helper
+│   ├── ci-lint.sh                # shellcheck + shfmt + JSON validation
+│   └── ci-test.sh                # plugin test runner
 └── .github/workflows/
     ├── ci.yml                    # lint + test on every push/PR
-    └── release.yml               # tag → GitHub Release
+    └── release.yml               # auto version bump + GitHub Release
 ```
 
 ## Versioning
@@ -41,33 +42,27 @@ Every plugin has its own semver version in `plugin.json`. The marketplace has a 
 | **MINOR** (1.X.0) | New features, backwards-compatible additions | New skill/command, new option in existing script, new hook |
 | **MAJOR** (X.0.0) | Breaking changes that require user action | Rename/remove a skill, change hook config format, change script interface |
 
-### What to bump
+### Commit messages
 
-| Scope | File | When |
+Use [Conventional Commits](https://www.conventionalcommits.org/) format. The Auto Release workflow reads commit messages to determine the bump level:
+
+| Commit prefix | Bump level | Example |
 | --- | --- | --- |
-| Plugin version | `plugins/<name>/.claude-plugin/plugin.json` | Any change to that plugin |
-| Marketplace version | `.claude-plugin/marketplace.json` | Every release (follows highest bump across plugins) |
-| Git tag | `git tag vX.Y.Z` | Matches marketplace version |
+| `fix(plugin):` | patch | `fix(merge-checks): handle detached HEAD in gather-context` |
+| `feat(plugin):` | minor | `feat(merge-checks): add scope selection Phase 0` |
+| `feat(plugin)!:` or `BREAKING CHANGE:` | major | `feat(mermaid)!: rename /mermaid-diagram to /diagram` |
 
-### Release workflow
+### Release workflow (automatic)
 
-```bash
-# 1. Make changes, commit them
+Releases are fully automated via GitHub Actions (`.github/workflows/release.yml`):
 
-# 2. Run the release script
-bash scripts/release.sh minor          # bump type: patch | minor | major
+1. Push commits to `main` (directly or via merged PR)
+2. The Auto Release workflow detects which plugins changed since the last tag
+3. Reads commit messages to determine bump level (`fix:` → patch, `feat:` → minor, `BREAKING CHANGE` → major)
+4. Bumps each changed plugin's `plugin.json` + marketplace version
+5. Commits the version bumps, creates a git tag, and publishes a GitHub Release
 
-# 3. Push
-git push && git push --tags
-```
-
-The release script:
-
-1. Detects which plugins changed since last tag
-2. Bumps each changed plugin's `plugin.json` version
-3. Bumps the marketplace version (using the highest bump type)
-4. Commits the version bumps
-5. Creates the git tag
+**Do not bump versions manually** — the workflow handles everything.
 
 ## Testing
 
@@ -87,4 +82,4 @@ bash scripts/ci-lint.sh && bash scripts/ci-test.sh
 - [ ] `shellcheck` passes on any new/modified `.sh` files
 - [ ] Plugin tests pass (`bash scripts/ci-test.sh`)
 - [ ] JSON files are valid (`jq empty` on any modified `.json`)
-- [ ] Version NOT bumped in PR (the release script handles this after merge)
+- [ ] Version NOT bumped in PR (the Auto Release workflow handles this after merge)

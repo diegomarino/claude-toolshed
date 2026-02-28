@@ -5,13 +5,13 @@
 # directories are staged, the commit is rejected.
 #
 # Files outside plugins/ (README.md, scripts/, .github/, etc.) are always allowed.
-# The release.sh script commits only .claude-plugin/ dirs, which is also exempt.
+# The Auto Release workflow commits only .claude-plugin/ dirs, which is also exempt.
 set -euo pipefail
 
 # Get staged files under plugins/
-PLUGIN_DIRS=$(git diff --cached --name-only -- 'plugins/' 2>/dev/null \
-  | sed -n 's|^plugins/\([^/]*\)/.*|\1|p' \
-  | sort -u)
+PLUGIN_DIRS=$(git diff --cached --name-only -- 'plugins/' 2>/dev/null |
+  sed -n 's|^plugins/\([^/]*\)/.*|\1|p' |
+  sort -u)
 
 # Empty string means no plugins staged — that's fine
 [[ -z "$PLUGIN_DIRS" ]] && exit 0

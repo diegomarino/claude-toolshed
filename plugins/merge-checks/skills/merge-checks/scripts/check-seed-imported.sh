@@ -37,7 +37,7 @@ if [[ -n "$ORCH_CACHE" ]] && [[ -f "$ORCH_CACHE" ]]; then
   # Fast path: use pre-computed orchestrator list (one find per project, not per file)
   while IFS= read -r f; do
     [[ -n "$f" ]] && [[ -f "$f" ]] && ORCHESTRATORS+=("$f")
-  done < "$ORCH_CACHE"
+  done <"$ORCH_CACHE"
 else
   # Slow path: discover orchestrators from scratch (standalone invocation)
   ORCHESTRATOR_PATTERNS=(
@@ -49,8 +49,8 @@ else
     "database/seed.ts"
     "database/seeds/DatabaseSeeder.ts"
     "DatabaseSeeder.ts"
-    "conftest.py"            # Python / pytest
-    "db/seeds.rb"            # Rails
+    "conftest.py" # Python / pytest
+    "db/seeds.rb" # Rails
   )
   for pattern in "${ORCHESTRATOR_PATTERNS[@]}"; do
     found=$(find . -name "$(basename "$pattern")" -path "*$(dirname "$pattern")*" \

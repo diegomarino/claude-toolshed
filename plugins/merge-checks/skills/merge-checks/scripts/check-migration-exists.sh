@@ -57,7 +57,7 @@ for dir in "${MIGRATION_DIRS[@]}"; do
   while IFS= read -r migration; do
     # Get commit time of this migration
     MT=$(git log -1 --format="%at" ${HEAD:+"$HEAD"} -- "$migration" 2>/dev/null || echo 0)
-    if (( MT > NEWEST_TIME )); then
+    if ((MT > NEWEST_TIME)); then
       NEWEST_TIME="$MT"
       NEWEST_MIGRATION="$migration"
     fi
@@ -69,7 +69,7 @@ if [[ -z "$NEWEST_MIGRATION" ]]; then
   exit 1
 fi
 
-if (( NEWEST_TIME >= SCHEMA_CHANGED_AT )); then
+if ((NEWEST_TIME >= SCHEMA_CHANGED_AT)); then
   echo "FOUND: $NEWEST_MIGRATION (committed after schema change)"
   exit 0
 else

@@ -54,6 +54,6 @@ while IFS= read -r line; do
     echo "MISSING  $VARNAME  $SOURCE"
     MISSING=1
   fi
-done <<< "$REFERENCED_RAW"
+done <<<"$REFERENCED_RAW"
 
 exit $MISSING

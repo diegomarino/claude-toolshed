@@ -105,4 +105,7 @@ git diff "$BASE" ${HEAD:+"$HEAD"} --unified=0 | awk '
     if (line ~ /\bTODO\b/ && line !~ /\bTODO\b[^:]*:[^:]*[A-Za-z][A-Za-z][A-Za-z][A-Za-z][A-Za-z]/)
       print "WARN     " loc "  bare TODO (no description)"
   }
-' | { results=$(cat); if [[ -z "$results" ]]; then echo "(no debug artifacts found)"; else echo "$results"; fi; }
+' | {
+  results=$(cat)
+  if [[ -z "$results" ]]; then echo "(no debug artifacts found)"; else echo "$results"; fi
+}

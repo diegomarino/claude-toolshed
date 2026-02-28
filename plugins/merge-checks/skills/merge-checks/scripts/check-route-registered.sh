@@ -28,7 +28,7 @@ if [[ -n "$BOOTSTRAP_CACHE" ]] && [[ -f "$BOOTSTRAP_CACHE" ]]; then
   # Fast path: use pre-computed bootstrap file list (one find per project, not per route)
   while IFS= read -r f; do
     [[ -n "$f" ]] && [[ -f "$f" ]] && BOOTSTRAP_FILES+=("$f")
-  done < "$BOOTSTRAP_CACHE"
+  done <"$BOOTSTRAP_CACHE"
 else
   # Slow path: discover bootstrap files from scratch (standalone invocation)
   BOOTSTRAP_PATTERNS=(
@@ -45,15 +45,15 @@ else
     found=$(find . -name "$pattern" -not -path "*/node_modules/*" -not -path "*/__tests__/*" -not -path "*/test/*" -maxdepth 6 2>/dev/null)
     while IFS= read -r f; do
       [[ -n "$f" ]] && BOOTSTRAP_FILES+=("$f")
-    done <<< "$found"
+    done <<<"$found"
   done
 fi
 
 # Search for route registration using multiple patterns
 SEARCH_TERMS=(
-  "$STEM"                           # stem: calendar-external
-  "$(echo "$STEM" | sed 's/-/\//g')"  # camel: calendarExternal (approx)
-  "$BASENAME"                       # full filename
+  "$STEM"                            # stem: calendar-external
+  "$(echo "$STEM" | sed 's/-/\//g')" # camel: calendarExternal (approx)
+  "$BASENAME"                        # full filename
 )
 
 for file in "${BOOTSTRAP_FILES[@]}"; do

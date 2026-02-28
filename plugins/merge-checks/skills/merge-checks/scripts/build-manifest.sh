@@ -20,10 +20,10 @@ EXCLUDE_PATTERN='(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|\.lock$|routeTre
 
 get_files() {
   local filter="$1"
-  git diff "$BASE" ${HEAD:+"$HEAD"} --name-only --diff-filter="$filter" 2>/dev/null \
-    | grep -Ev "$EXCLUDE_PATTERN" \
-    | sort \
-    || true
+  git diff "$BASE" ${HEAD:+"$HEAD"} --name-only --diff-filter="$filter" 2>/dev/null |
+    grep -Ev "$EXCLUDE_PATTERN" |
+    sort ||
+    true
 }
 
 ADDED=$(get_files A)

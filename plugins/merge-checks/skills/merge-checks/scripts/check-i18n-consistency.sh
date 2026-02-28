@@ -64,7 +64,7 @@ extract_keys() {
 REF_FILE="${LOCALE_FILES[0]}"
 REF_BASENAME=$(basename "$REF_FILE")
 REF_KEYS_FILE=$(mktemp)
-extract_keys "$REF_FILE" > "$REF_KEYS_FILE"
+extract_keys "$REF_FILE" >"$REF_KEYS_FILE"
 
 _found_issues=false
 
@@ -73,7 +73,7 @@ for LOCALE_FILE in "${LOCALE_FILES[@]}"; do
 
   LOCALE_BASENAME=$(basename "$LOCALE_FILE")
   LOCALE_KEYS_FILE=$(mktemp)
-  extract_keys "$LOCALE_FILE" > "$LOCALE_KEYS_FILE"
+  extract_keys "$LOCALE_FILE" >"$LOCALE_KEYS_FILE"
 
   # Keys in reference but missing from this locale
   while IFS= read -r key; do

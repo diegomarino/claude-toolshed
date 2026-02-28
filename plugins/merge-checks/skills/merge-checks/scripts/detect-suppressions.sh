@@ -41,11 +41,11 @@ git diff "$BASE" ${HEAD:+"$HEAD"} --unified=0 | awk '
     offset++
   }
 ' | grep -E \
-  'as any|@ts-ignore|@ts-expect-error|as unknown as|# type: ignore|# noqa|# pylint: disable|@SuppressWarnings|@Suppress\(|//nolint:|#\[allow\(|eslint-disable|prettier-ignore|rubocop:disable' \
-  | awk '{
+  'as any|@ts-ignore|@ts-expect-error|as unknown as|# type: ignore|# noqa|# pylint: disable|@SuppressWarnings|@Suppress\(|//nolint:|#\[allow\(|eslint-disable|prettier-ignore|rubocop:disable' |
+  awk '{
     loc = $1; sub(/\t.*/, "", loc)
     sub(/^[^\t]+\t/, "")
     printf "  %-50s %s\n", loc, $0
-  }' \
-  | sort \
-  || echo "  (none)"
+  }' |
+  sort ||
+  echo "  (none)"

@@ -166,7 +166,7 @@ echo ""
 # ─────────────────────────────────────────────────────────────────────────────
 # 3. FILE MANIFEST
 # ─────────────────────────────────────────────────────────────────────────────
-run_required build-manifest.sh "${BASE:-HEAD~1}" "$DIFF_HEAD" > "$MC_TMP/manifest.txt"
+run_required build-manifest.sh "${BASE:-HEAD~1}" "$DIFF_HEAD" >"$MC_TMP/manifest.txt"
 
 echo "## FILE MANIFEST"
 cat "$MC_TMP/manifest.txt"
@@ -178,23 +178,25 @@ MODIFIED_FILES=()
 _section=""
 while IFS= read -r line; do
   case "$line" in
-    "ADDED:")    _section="added" ;;
+    "ADDED:") _section="added" ;;
     "MODIFIED:") _section="modified" ;;
-    "TOTAL:"*)   _section="" ;;
-    "  (none)")  continue ;;
+    "TOTAL:"*) _section="" ;;
+    "  (none)") continue ;;
     "  "*)
       _file="${line#  }"
       [[ -z "$_file" ]] && continue
-      if   [[ "$_section" == "added" ]];    then ADDED_FILES+=("$_file")
-      elif [[ "$_section" == "modified" ]]; then MODIFIED_FILES+=("$_file")
+      if [[ "$_section" == "added" ]]; then
+        ADDED_FILES+=("$_file")
+      elif [[ "$_section" == "modified" ]]; then
+        MODIFIED_FILES+=("$_file")
       fi
       ;;
   esac
-done < "$MC_TMP/manifest.txt"
+done <"$MC_TMP/manifest.txt"
 
 # Combine into ALL_FILES
 ALL_FILES=()
-[[ ${#ADDED_FILES[@]} -gt 0 ]]    && ALL_FILES+=("${ADDED_FILES[@]}")
+[[ ${#ADDED_FILES[@]} -gt 0 ]] && ALL_FILES+=("${ADDED_FILES[@]}")
 [[ ${#MODIFIED_FILES[@]} -gt 0 ]] && ALL_FILES+=("${MODIFIED_FILES[@]}")
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -206,22 +208,22 @@ BOOTSTRAP_CACHE="$MC_TMP/bootstraps.txt"
 # Seed orchestrators: find all candidates in a single pass
 {
   find . \( -name "seed.ts" -o -name "seed.js" -o -name "seed.mts" \
-            -o -name "seeds.rb" -o -name "conftest.py" -o -name "DatabaseSeeder.ts" \) \
+    -o -name "seeds.rb" -o -name "conftest.py" -o -name "DatabaseSeeder.ts" \) \
     -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" \
     -maxdepth 8 2>/dev/null
   find . \( -name "index.ts" -o -name "index.js" \) \
     \( -path "*/seeds/*" -o -path "*/db/*" -o -path "*/database/*" \) \
     -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" \
     -maxdepth 8 2>/dev/null
-} | sort -u > "$ORCH_CACHE"
+} | sort -u >"$ORCH_CACHE"
 
 # Route bootstraps: find all candidates in a single pass
 {
   find . \( -name "app.ts" -o -name "app.js" -o -name "app.mts" \
-            -o -name "server.ts" -o -name "server.js" -o -name "server.mts" \
-            -o -name "main.ts" -o -name "main.js" -o -name "main.mts" \
-            -o -name "router.ts" -o -name "routes.ts" \
-            -o -name "app.py" -o -name "main.py" -o -name "server.py" \) \
+    -o -name "server.ts" -o -name "server.js" -o -name "server.mts" \
+    -o -name "main.ts" -o -name "main.js" -o -name "main.mts" \
+    -o -name "router.ts" -o -name "routes.ts" \
+    -o -name "app.py" -o -name "main.py" -o -name "server.py" \) \
     -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/dist/*" \
     -not -path "*/__tests__/*" -not -path "*/test/*" \
     -maxdepth 6 2>/dev/null
@@ -232,7 +234,7 @@ BOOTSTRAP_CACHE="$MC_TMP/bootstraps.txt"
     -maxdepth 6 2>/dev/null
   find . -name "routes.rb" -path "*/config/*" \
     -not -path "*/node_modules/*" -maxdepth 6 2>/dev/null
-} | sort -u > "$BOOTSTRAP_CACHE"
+} | sort -u >"$BOOTSTRAP_CACHE"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 4. MECHANICAL CHECKS
@@ -265,7 +267,7 @@ if [[ "${I18N:-false}" == "true" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
   _found_i18n=false
   for _file in "${ALL_FILES[@]}"; do
     [[ "$_file" =~ \.(tsx|jsx|vue|svelte|html|erb|haml|jinja|j2)$ ]] || continue
-    [[ "$_file" =~ \.stories\. ]]    && continue
+    [[ "$_file" =~ \.stories\. ]] && continue
     [[ "$_file" =~ \.(test|spec)\. ]] && continue
     [[ -f "$_file" ]] || continue
     _result=$(run_check list-hardcoded-strings.sh "$_file")
@@ -299,14 +301,14 @@ if [[ "${STORIES:-false}" == "true" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
     [[ "$_file" =~ \.(tsx|jsx|vue|svelte)$ ]] || continue
     [[ "$_file" =~ \.(stories|test|spec)\. ]] && continue
     [[ -f "$_file" ]] || continue
-    bash "$SCRIPTS/check-story-exists.sh" "$_file" > "$_sdir/$_si.txt" 2>/dev/null &
+    bash "$SCRIPTS/check-story-exists.sh" "$_file" >"$_sdir/$_si.txt" 2>/dev/null &
     _spids+=($!) && _si=$((_si + 1))
   done
   [[ ${#_spids[@]} -gt 0 ]] && wait "${_spids[@]}" || true
   if [[ $_si -eq 0 ]]; then
     echo "  (no component files)"
   else
-    for ((_i=0; _i<_si; _i++)); do cat "$_sdir/$_i.txt" 2>/dev/null || true; done
+    for ((_i = 0; _i < _si; _i++)); do cat "$_sdir/$_i.txt" 2>/dev/null || true; done
   fi
 else
   echo "  (not applicable — STORIES=${STORIES:-false})"
@@ -320,22 +322,22 @@ if [[ "${TESTS:-false}" == "true" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
   _tpids=() && _ti=0
   for _file in "${ALL_FILES[@]}"; do
     [[ "$_file" =~ \.(ts|js|tsx|jsx|py|rb|go|rs|java|kt|swift)$ ]] || continue
-    [[ "$_file" =~ \.(test|spec)\. ]]  && continue
-    [[ "$_file" =~ \.stories\. ]]      && continue
+    [[ "$_file" =~ \.(test|spec)\. ]] && continue
+    [[ "$_file" =~ \.stories\. ]] && continue
     [[ "$_file" =~ \.(json|yaml|yml|md|sql|sh|env)$ ]] && continue
     # Skip config, migration, seed, fixture, story utility files
     [[ "$_file" =~ /(config|migrate|migration|seed|fixture|seeder|factory)[^/]*$ ]] && continue
-    [[ "$_file" =~ /drizzle/ ]]        && continue
-    [[ "$_file" =~ /stories/ ]]        && continue
+    [[ "$_file" =~ /drizzle/ ]] && continue
+    [[ "$_file" =~ /stories/ ]] && continue
     [[ -f "$_file" ]] || continue
-    bash "$SCRIPTS/check-test-exists.sh" "$_file" > "$_tdir/$_ti.txt" 2>/dev/null &
+    bash "$SCRIPTS/check-test-exists.sh" "$_file" >"$_tdir/$_ti.txt" 2>/dev/null &
     _tpids+=($!) && _ti=$((_ti + 1))
   done
   [[ ${#_tpids[@]} -gt 0 ]] && wait "${_tpids[@]}" || true
   if [[ $_ti -eq 0 ]]; then
     echo "  (no source files eligible for test check)"
   else
-    for ((_i=0; _i<_ti; _i++)); do cat "$_tdir/$_i.txt" 2>/dev/null || true; done
+    for ((_i = 0; _i < _ti; _i++)); do cat "$_tdir/$_i.txt" 2>/dev/null || true; done
   fi
 else
   echo "  (not applicable — TESTS=${TESTS:-false})"
@@ -365,9 +367,9 @@ if [[ "${MIGRATIONS:-false}" == "true" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
   _found_schema=false
   for _file in "${ALL_FILES[@]}"; do
     # Schema files: Drizzle/TypeORM (schema/), Prisma (schema.prisma), SQLAlchemy (models/)
-    [[ "$_file" =~ /schema/[^/]+\.(ts|js|py)$  ]] || \
-    [[ "$_file" =~ /models/[^/]+\.(ts|js|py|rb)$ ]] || \
-    [[ "$_file" =~ schema\.prisma$               ]] || continue
+    [[ "$_file" =~ /schema/[^/]+\.(ts|js|py)$ ]] ||
+      [[ "$_file" =~ /models/[^/]+\.(ts|js|py|rb)$ ]] ||
+      [[ "$_file" =~ schema\.prisma$ ]] || continue
     [[ -f "$_file" ]] || continue
     run_check check-migration-exists.sh "$_file" "${BASE:-HEAD~1}" "$DIFF_HEAD"
     _found_schema=true
@@ -399,19 +401,19 @@ if [[ -n "${SHARED_PKG:-}" ]] && [[ ${#ALL_FILES[@]} -gt 0 ]]; then
   _shdir="$MC_TMP/shared" && mkdir -p "$_shdir"
   _shpids=() && _shi=0
   for _file in "${ALL_FILES[@]}"; do
-    [[ "$_file" =~ \.(ts|tsx|py)$ ]]   || continue
-    [[ "$_file" == *"$SHARED_PKG"* ]]  && continue  # already in shared
-    [[ "$_file" =~ \.(test|spec)\. ]]  && continue
-    [[ "$_file" =~ \.stories\. ]]      && continue
+    [[ "$_file" =~ \.(ts|tsx|py)$ ]] || continue
+    [[ "$_file" == *"$SHARED_PKG"* ]] && continue # already in shared
+    [[ "$_file" =~ \.(test|spec)\. ]] && continue
+    [[ "$_file" =~ \.stories\. ]] && continue
     [[ -f "$_file" ]] || continue
-    bash "$SCRIPTS/check-shared-types.sh" "$_file" "${SHARED_PKG}" > "$_shdir/$_shi.txt" 2>/dev/null &
+    bash "$SCRIPTS/check-shared-types.sh" "$_file" "${SHARED_PKG}" >"$_shdir/$_shi.txt" 2>/dev/null &
     _shpids+=($!) && _shi=$((_shi + 1))
   done
   [[ ${#_shpids[@]} -gt 0 ]] && wait "${_shpids[@]}" || true
   if [[ $_shi -eq 0 ]]; then
     echo "  (no eligible source files)"
   else
-    for ((_i=0; _i<_shi; _i++)); do cat "$_shdir/$_i.txt" 2>/dev/null || true; done
+    for ((_i = 0; _i < _shi; _i++)); do cat "$_shdir/$_i.txt" 2>/dev/null || true; done
   fi
 else
   echo "  (not applicable — SHARED_PKG=${SHARED_PKG:-none})"

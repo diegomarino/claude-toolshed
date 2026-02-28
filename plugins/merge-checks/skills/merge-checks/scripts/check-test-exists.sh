@@ -23,7 +23,7 @@ STEM="${BASENAME%.*}"
 
 # Count source lines (for priority guidance)
 LINE_COUNT=0
-[[ -f "$SOURCE" ]] && LINE_COUNT=$(wc -l < "$SOURCE" | tr -d ' ')
+[[ -f "$SOURCE" ]] && LINE_COUNT=$(wc -l <"$SOURCE" | tr -d ' ')
 
 # ── Direct test file lookup ───────────────────────────────────────────────────
 CANDIDATES=(

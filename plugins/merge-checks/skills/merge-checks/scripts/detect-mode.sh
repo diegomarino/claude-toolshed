@@ -33,10 +33,10 @@ ref_exists() {
 
 suggest_branches() {
   local target="$1"
-  git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null \
-    | grep -vE '^HEAD$|.*/HEAD$' \
-    | sort -u \
-    | awk -v target="$target" '
+  git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null |
+    grep -vE '^HEAD$|.*/HEAD$' |
+    sort -u |
+    awk -v target="$target" '
         function max(a,b){ return a>b?a:b }
         BEGIN {
           t = tolower(target)
@@ -74,10 +74,10 @@ suggest_branches() {
 
           if (score > 0) printf "%d\t%s\n", score, c
         }
-      ' \
-    | sort -t $'\t' -k1,1nr -k2,2 \
-    | awk -F'\t' '!seen[$2]++ { print $2 }' \
-    | head -5
+      ' |
+    sort -t $'\t' -k1,1nr -k2,2 |
+    awk -F'\t' '!seen[$2]++ { print $2 }' |
+    head -5
 }
 
 auto_detect_base() {
@@ -131,7 +131,7 @@ elif [[ -n "$ARGUMENT" ]]; then
       echo "Did you mean one of these?" >&2
       while IFS= read -r branch; do
         [[ -n "$branch" ]] && echo "  - $branch" >&2
-      done <<< "$suggestions"
+      done <<<"$suggestions"
     else
       echo "No similar local/remote branches were found." >&2
     fi
