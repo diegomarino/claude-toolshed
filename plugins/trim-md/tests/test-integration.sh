@@ -26,15 +26,15 @@ fi
 TEST_DIR="$(mktemp -d)"
 trap 'rm -rf "$TEST_DIR"' EXIT
 
-cat > "$TEST_DIR/clean.md" << 'EOF'
+cat >"$TEST_DIR/clean.md" <<'EOF'
 # Clean File
 
 No issues here.
 EOF
 
-printf '# Messy File\n\n\n\nExtra blank lines.\n\n\nTrailing spaces.   \n' > "$TEST_DIR/messy.md"
+printf '# Messy File\n\n\n\nExtra blank lines.\n\n\nTrailing spaces.   \n' >"$TEST_DIR/messy.md"
 
-cat > "$TEST_DIR/protected.md" << 'EOF'
+cat >"$TEST_DIR/protected.md" <<'EOF'
 <!-- trim-md:disable -->
 # Protected File
 

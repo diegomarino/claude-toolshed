@@ -15,17 +15,17 @@ TESTS=()
 setup_fixtures() {
   TEST_DIR="$(mktemp -d)"
 
-  cat > "$TEST_DIR/clean.md" << 'EOF'
+  cat >"$TEST_DIR/clean.md" <<'EOF'
 # Clean File
 
 No issues here.
 EOF
 
   # Messy: multiple blank lines + trailing spaces
-  printf '# Messy File\n\n\n\nExtra blank lines.\n\n\nTrailing spaces.   \n' > "$TEST_DIR/messy.md"
+  printf '# Messy File\n\n\n\nExtra blank lines.\n\n\nTrailing spaces.   \n' >"$TEST_DIR/messy.md"
 
   # Opt-out: standalone comment on its own line
-  cat > "$TEST_DIR/protected.md" << 'EOF'
+  cat >"$TEST_DIR/protected.md" <<'EOF'
 <!-- trim-md:disable -->
 # Protected File
 
@@ -34,7 +34,7 @@ This file should not be modified despite having issues.
 EOF
 
   # Inline mention of opt-out (should NOT be skipped)
-  cat > "$TEST_DIR/mentions-optout.md" << 'EOF'
+  cat >"$TEST_DIR/mentions-optout.md" <<'EOF'
 # Documentation
 
 This file mentions <!-- trim-md:disable --> inline but should still be checked.
@@ -44,19 +44,19 @@ Extra blank lines here.
 EOF
 
   mkdir -p "$TEST_DIR/node_modules"
-  cat > "$TEST_DIR/node_modules/ignored.md" << 'EOF'
+  cat >"$TEST_DIR/node_modules/ignored.md" <<'EOF'
 # Should be ignored
 
 
 Bad content in node_modules.
 EOF
 
-  cat > "$TEST_DIR/not-markdown.txt" << 'EOF'
+  cat >"$TEST_DIR/not-markdown.txt" <<'EOF'
 This is not a markdown file.
 EOF
 
   mkdir -p "$TEST_DIR/subdir"
-  cat > "$TEST_DIR/subdir/nested.md" << 'EOF'
+  cat >"$TEST_DIR/subdir/nested.md" <<'EOF'
 # Nested File
 
 
@@ -161,7 +161,6 @@ assert_file_unchanged "fix: clean.md unchanged" "$TEST_DIR/clean.md" "$CLEAN_BEF
 assert_file_unchanged "fix: protected.md unchanged" "$TEST_DIR/protected.md" "$PROTECTED_BEFORE"
 
 # Verify messy.md no longer has triple blank lines
-MESSY_AFTER="$(cat "$TEST_DIR/messy.md")"
 if awk '/^$/{n++; if(n>=2){found=1}} /^.+$/{n=0} END{exit !found}' "$TEST_DIR/messy.md"; then
   FAIL=$((FAIL + 1))
   TESTS+=("  FAIL  fix: messy.md still has multiple blank lines")
@@ -266,7 +265,7 @@ assert_contains "bad-path: error message" "$OUTPUT" "Path not found"
 echo "Test 12: Table compaction"
 TABLE_DIR="$(mktemp -d)"
 
-cat > "$TABLE_DIR/padded.md" << 'TABLEEOF'
+cat >"$TABLE_DIR/padded.md" <<'TABLEEOF'
 # Tables
 
 | Name                      | Purpose                                  |
@@ -280,7 +279,7 @@ cat > "$TABLE_DIR/padded.md" << 'TABLEEOF'
 | a    | b      | c     |
 TABLEEOF
 
-cat > "$TABLE_DIR/code-table.md" << 'CODEEOF'
+cat >"$TABLE_DIR/code-table.md" <<'CODEEOF'
 # Code
 
 ```
@@ -289,7 +288,6 @@ cat > "$TABLE_DIR/code-table.md" << 'CODEEOF'
 ```
 CODEEOF
 
-PADDED_BEFORE="$(cat "$TABLE_DIR/padded.md")"
 CODE_BEFORE="$(cat "$TABLE_DIR/code-table.md")"
 
 OUTPUT="$(bash "$SCRIPT" "$TABLE_DIR" 2>&1)"
@@ -331,7 +329,7 @@ rm -rf "$TABLE_DIR"
 
 echo "Test 13: Dry-run table padding detection"
 TABLE_DIR="$(mktemp -d)"
-cat > "$TABLE_DIR/padded.md" << 'TABLEEOF'
+cat >"$TABLE_DIR/padded.md" <<'TABLEEOF'
 # Padded
 
 | Name                      | Value          |

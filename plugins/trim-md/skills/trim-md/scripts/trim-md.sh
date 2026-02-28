@@ -53,7 +53,7 @@ EXCLUDE_PATTERN='(node_modules|\.worktrees|\.git/|\.pytest_cache|\.venv|__pycach
 for p in "${PATHS[@]}"; do
   if [[ -f "$p" ]]; then
     case "$p" in
-      *.md|*.markdown) ALL_FILES+=("$p") ;;
+      *.md | *.markdown) ALL_FILES+=("$p") ;;
       *) echo "Skipping non-markdown file: $(_rel "$p")" >&2 ;;
     esac
   elif [[ -d "$p" ]]; then
@@ -172,7 +172,7 @@ if [[ "$DRY_RUN" == true ]]; then
         # Extract just the line number and rule info (strip the file path prefix)
         DETAIL="${line#*"$f":}"
         FILE_REPORT+=$'\n'"    Line $DETAIL"
-      done <<< "$FILE_ISSUES"
+      done <<<"$FILE_ISSUES"
     else
       CLEAN_COUNT=$((CLEAN_COUNT + 1))
     fi
@@ -236,7 +236,7 @@ else
   for f in "${ELIGIBLE[@]}"; do
     if has_table_padding "$f"; then
       COMPACTED="$(compact_tables "$f")"
-      printf '%s\n' "$COMPACTED" > "$f"
+      printf '%s\n' "$COMPACTED" >"$f"
     fi
   done
 
