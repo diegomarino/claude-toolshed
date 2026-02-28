@@ -12,6 +12,7 @@ A plugin marketplace for Claude Code — install pre-packaged skills directly in
   - [merge-checks](#merge-checks)
   - [dev-setup](#dev-setup)
   - [trim-md](#trim-md)
+  - [plugin-updater](#plugin-updater)
 
 ## Install
 
@@ -24,6 +25,7 @@ Add the marketplace, then install any plugin:
 /plugin install merge-checks@claude-toolshed
 /plugin install dev-setup@claude-toolshed
 /plugin install trim-md@claude-toolshed
+/plugin install plugin-updater@claude-toolshed
 
 ```
 
@@ -35,6 +37,7 @@ Add the marketplace, then install any plugin:
 | [merge-checks](#merge-checks) | Audit code changes across 13 quality dimensions |
 | [dev-setup](#dev-setup) | Generate dev server lifecycle scripts with pool-based port isolation (20000-29999) |
 | [trim-md](#trim-md) | Trim and optimize markdown files for LLM agent consumption |
+| [plugin-updater](#plugin-updater) | Auto-update third-party marketplace plugins on session start |
 
 ---
 
@@ -251,3 +254,20 @@ Trim and optimize markdown files for LLM agent consumption. Removes token waste 
 > **[Full documentation →](plugins/trim-md/README.md)** — all rules with LLM rationale, dual-config strategy, output format, testing
 
 **Requires:** Node.js (markdownlint-cli2 auto-downloaded via npx)
+
+---
+
+### plugin-updater
+
+Auto-update third-party marketplace plugins on session start. Workaround for [#26744](https://github.com/anthropics/claude-code/issues/26744) — plugins from non-official marketplaces don't auto-update. This plugin will become unnecessary once the bug is fixed.
+
+| Command | What it does |
+| --- | --- |
+| `/plugin-updater` | Force-update all third-party plugins now (bypasses cooldown) |
+| `/plugin-updater status` | Show plugin health dashboard with version comparison |
+
+Installs a `SessionStart` hook that runs automatically. Updates marketplaces and plugins in parallel with a 1-hour cooldown to avoid hammering on rapid restarts.
+
+> **[Full documentation →](plugins/plugin-updater/README.md)** — how it works, known limitations, status dashboard
+
+**Requires:** `claude` CLI in `$PATH`

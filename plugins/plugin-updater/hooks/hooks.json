@@ -1,0 +1,17 @@
+{
+  "description": "Auto-update third-party marketplace plugins on session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-update-plugins.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "plugin-updater",
+  "version": "1.0.0",
+  "description": "Auto-update third-party marketplace plugins on session start",
+  "license": "MIT"
+}

@@ -28,6 +28,11 @@
       "name": "trim-md",
       "source": "./plugins/trim-md",
       "description": "Trim and optimize markdown files for LLM agent consumption"
+    },
+    {
+      "name": "plugin-updater",
+      "source": "./plugins/plugin-updater",
+      "description": "Auto-update third-party marketplace plugins on session start"
     }
   ]
 }
