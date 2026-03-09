@@ -42,6 +42,8 @@ Generate a Mermaid state diagram for state machines, lifecycle management, or wo
    - Label transitions with triggers/conditions
    - Use composite states for sub-workflows
    - Add notes for important state behaviors
+   - ⚠️ Transition labels must be single-line — never embed `\n` or literal line breaks inside `: label` text; the real Mermaid parser rejects multiline transition labels even if local validation passes
+   - ⚠️ Avoid `[text containing a colon]` in labels — it can confuse some parsers; use plain text or wrap in quotes instead
 7. **Validate**:
    - If output is Markdown with ` ```mermaid ` blocks, use:
      `node "$PLUGIN_DIR/scripts/extract_mermaid.js" {file} --validate`

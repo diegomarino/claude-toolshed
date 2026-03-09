@@ -37,6 +37,8 @@ Generate a Mermaid sequence diagram for API calls, service interactions, and mes
    - Use Unicode symbols: 👤 client, 🌐 gateway, 🔐 auth, ⚙️ service, 💾 database, ⚡ cache, 📨 queue
    - Add features: `par`/`and` for parallel, `alt`/`else` for conditionals, `loop` for retries
    - Include HTTP methods/paths (POST /login) and status codes (200 OK)
+   - ⚠️ Never use `;` inside `Note` text — it terminates the statement in the real Mermaid parser even if local validation passes; use `,` or `()` instead
+   - ⚠️ Avoid `[text containing a colon]` in message labels — it can confuse some parsers; use plain text or quoted strings instead
 6. **Validate**:
    - If output is Markdown with ` ```mermaid ` blocks, use:
      `node "$PLUGIN_DIR/scripts/extract_mermaid.js" {file} --validate`

@@ -428,6 +428,30 @@ sequenceDiagram
 
 ---
 
+### ❌ Error 13b: Semicolon Inside Note Text
+
+**Severity:** 🔴 Critical — passes local validation but fails in the real Mermaid parser
+
+**Problem:** Using `;` inside a `Note` statement. The official Mermaid parser treats `;` as a statement terminator, silently truncating or breaking the Note. The `beautiful-mermaid` local validator does not enforce this.
+
+**Incorrect:**
+<!-- validate:skip -->
+```mermaid
+sequenceDiagram
+    Note over Alice: Step 1; Step 2
+```
+
+**Correct:**
+
+```mermaid
+sequenceDiagram
+    Note over Alice: Step 1, Step 2
+```
+
+**Alternatives:** Use `,` to separate items, or `()` to group them. Avoid `;` entirely in Note text.
+
+---
+
 ### ❌ Error 13: Missing "end" in alt/opt/loop Blocks
 
 **Severity:** 🔴 Critical - Causes parse errors
@@ -464,6 +488,30 @@ sequenceDiagram
 ## Class Diagrams
 
 ## State Diagrams
+
+### ❌ Error 19: Multiline Transition Labels
+
+**Severity:** 🔴 Critical — passes local validation but fails in the real Mermaid parser
+
+**Problem:** Embedding `\n` or a literal line break inside a transition label. The `beautiful-mermaid` validator is permissive here, but the official Mermaid CLI rejects it.
+
+**Incorrect:**
+<!-- validate:skip -->
+```mermaid
+stateDiagram-v2
+    A --> B : step one\nstep two
+```
+
+**Correct:**
+
+```mermaid
+stateDiagram-v2
+    A --> B : step one, step two
+```
+
+**Rule:** Transition labels (text after `:`) must be a single unbroken line.
+
+---
 
 ### ❌ Error 20: Incorrect State Description Syntax
 
