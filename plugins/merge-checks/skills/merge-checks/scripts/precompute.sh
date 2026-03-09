@@ -91,10 +91,16 @@ run_required() {
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. SCOPE — detect mode and base ref
 # ─────────────────────────────────────────────────────────────────────────────
-# Capture once, eval safe lines (MODE=, BASE=, N=), extract SCOPE separately
-_mode=$(run_required detect-mode.sh "$ARG")
-eval "$(printf '%s\n' "$_mode" | grep -E '^(MODE|BASE|N)=')"
-SCOPE=$(printf '%s\n' "$_mode" | grep '^SCOPE=' | sed 's/^SCOPE=//')
+# --recent, --today, --since, --uncommitted compute BASE themselves — skip
+# detect-mode.sh for those to avoid failing on repos without origin/main or
+# without merge commits. Only run it when no override (or --all, which reuses
+# the detected BASE).
+MODE="" BASE="" N="" SCOPE=""
+if [[ -z "$SCOPE_OVERRIDE" ]] || [[ "$SCOPE_OVERRIDE" == "all" ]]; then
+  _mode=$(run_required detect-mode.sh "$ARG")
+  eval "$(printf '%s\n' "$_mode" | grep -E '^(MODE|BASE|N)=')"
+  SCOPE=$(printf '%s\n' "$_mode" | grep '^SCOPE=' | sed 's/^SCOPE=//')
+fi
 
 # ── Apply scope overrides ────────────────────────────────────────────────────
 case "$SCOPE_OVERRIDE" in
