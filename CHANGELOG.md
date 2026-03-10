@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0 (2026-03-10)
+
+- **d2** v1.1.0 — [add D2 diagram drawing skills v1.0.0](plugins/d2/CHANGELOG.md#110-2026-03-10)
+
+
 ## v1.3.3 (2026-03-10)
 
 - **dev-setup** v1.1.1 — [respect pane-base-index for tmux session panes](plugins/dev-setup/CHANGELOG.md#111-2026-03-10)

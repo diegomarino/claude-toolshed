@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 (2026-03-10)
+
+### Features
+
+- add D2 diagram drawing skills v1.0.0 (08bfac6)
+
+
 ## [1.0.0] - 2026-03-10
 
 ### Added
