@@ -141,6 +141,55 @@ a -> b: {
 }
 ```
 
+**Important:** Hex color values must be double-quoted — `#` is a comment character in D2:
+
+```d2
+# WRONG — # starts a comment, color ignored
+a.style.fill: #f4a261
+
+# CORRECT
+a.style.fill: "#f4a261"
+
+# CSS color names do NOT need quotes
+a.style.fill: honeydew
+a.style.fill: deepskyblue
+```
+
+Gradients are also supported:
+
+```d2
+a.style.fill: "linear-gradient(#f69d3c, #3f87a6)"
+```
+
+### Arrowheads
+
+Override the arrowhead shape at either end of a connection:
+
+```d2
+a -> b: {
+  source-arrowhead.shape: circle
+  target-arrowhead.shape: diamond
+  target-arrowhead.style.filled: true
+}
+```
+
+**Available arrowhead shapes:**
+
+| Shape | Notes |
+|---|---|
+| `triangle` | Default |
+| `arrow` | Pointier triangle |
+| `diamond` | Supports `style.filled: true/false` |
+| `circle` | Supports `style.filled: true/false` |
+| `box` | Supports `style.filled: true/false` |
+| `cross` | |
+| `cf-one` | Crow's foot: exactly one (optional) |
+| `cf-one-required` | Crow's foot: exactly one (required) |
+| `cf-many` | Crow's foot: zero or more |
+| `cf-many-required` | Crow's foot: one or more |
+
+Crow's foot arrowheads are especially useful in ER diagrams to express cardinality without text labels.
+
 ### Shape Types
 
 D2 provides many built-in shapes:
@@ -158,6 +207,68 @@ D2 provides many built-in shapes:
 | `page` | Documents, files |
 | `sql_table` | Database tables with fields |
 | `sequence_diagram` | Makes container a sequence diagram |
+
+### Glob Styling
+
+Apply styles to multiple elements at once using wildcard patterns:
+
+```d2
+# All nodes: same size
+*.height: 300
+*.width: 140
+
+# All nodes matching "*mini": shorter
+*mini.height: 200
+
+# All connections: dashed
+*.style.stroke-dash: 4
+```
+
+Globs match on node names, not types. Useful for bulk visual consistency.
+
+---
+
+## Interactive Features
+
+### Tooltips
+
+Attach hover text to any node — useful for adding context without cluttering the diagram:
+
+```d2
+users: {
+  tooltip: Registered application users. PII is encrypted at rest.
+}
+api: {
+  tooltip: Rate-limited to 1000 req/min per API key
+}
+```
+
+Tooltips render as HTML `title` attributes in SVG output.
+
+### Icons
+
+Attach an icon URL to any node:
+
+```d2
+server: {
+  icon: https://icons.terrastruct.com/tech/019-server.svg
+  icon.near: outside-top-right
+}
+```
+
+`icon.near` controls position: `top-center`, `bottom-right`, `outside-top-right`, `outside-top-left`, etc.
+
+### Label Positioning
+
+Control where a node's label renders:
+
+```d2
+x: worker {
+  label.near: top-center
+}
+```
+
+Valid values: `top-left`, `top-center`, `top-right`, `center-left`, `center-right`, `bottom-left`, `bottom-center`, `bottom-right`
 
 ---
 

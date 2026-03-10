@@ -52,6 +52,17 @@ vars: {
 a -> b
 ```
 
+### Unquoted Hex Colors
+
+The `#` character starts a comment in D2. Hex color values must be double-quoted.
+
+```
+WRONG:  a.style.fill: #4a90d9   ← D2 reads this as "a.style.fill:" (comment stripped)
+CORRECT: a.style.fill: "#4a90d9"
+```
+
+CSS color names (e.g. `honeydew`, `deepskyblue`) do NOT need quotes.
+
 ### Unquoted Labels with Colons
 
 Labels containing `:` must be quoted, otherwise D2 parses the colon as a key-value separator.
