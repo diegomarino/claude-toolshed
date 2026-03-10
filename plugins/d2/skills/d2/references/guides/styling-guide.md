@@ -208,6 +208,64 @@ D2 provides many built-in shapes:
 | `sql_table` | Database tables with fields |
 | `sequence_diagram` | Makes container a sequence diagram |
 
+### Modular Classes
+
+Define reusable styles once and apply them across nodes with `.class:`:
+
+```d2
+classes: {
+  service: {
+    style: {
+      border-radius: 4
+      shadow: true
+    }
+  }
+  error: {
+    style.fill: "pink"
+    style.stroke: "red"
+  }
+  db: {
+    shape: cylinder
+    style.fill: "#e8f4f8"
+  }
+}
+
+auth: Auth Service {
+  class: service
+}
+payment: Payment Service {
+  class: [service; error]
+}
+users_db: {
+  class: db
+}
+```
+
+- `class: name` — apply one class
+- `class: [a; b]` — compose multiple classes (later entries override earlier)
+- Classes can also set `shape`, `width`, `height`, `icon`
+
+### Connection Indexing
+
+When multiple connections exist between the same two nodes, reference them by index to style individually:
+
+```d2
+x -> y: primary
+x -> y: fallback
+
+(x -> y)[0].style.stroke: green
+(x -> y)[1].style.stroke-dash: 4
+```
+
+### Chained Connections
+
+A single label applies to every connection in the chain:
+
+```d2
+# Label "Hosted By" applies to both arrows
+High Mem Instance -> EC2 <- High CPU Instance: Hosted By
+```
+
 ### Glob Styling
 
 Apply styles to multiple elements at once using wildcard patterns:
