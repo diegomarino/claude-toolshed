@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.3.3 (2026-03-10)
+
+- **dev-setup** v1.1.1 — [respect pane-base-index for tmux session panes](plugins/dev-setup/CHANGELOG.md#111-2026-03-10)
+
+
 ## v1.3.2 (2026-03-09)
 
 - **merge-checks** v1.2.1 — [skip detect-mode.sh for self-contained scope flags](plugins/merge-checks/CHANGELOG.md#121-2026-03-09)

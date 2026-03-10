@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "A plugin marketplace for Claude Code — pre-packaged skills for diagrams, code audits, dev servers, and markdown optimization.",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "pluginRoot": "./plugins"
   },
   "plugins": [

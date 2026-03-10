@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1 (2026-03-10)
+
+### Fixes
+
+- respect pane-base-index for tmux session panes (ea31f2d)
+
+
 ## 1.1.0 (2026-02-28)
 
 ### Features
