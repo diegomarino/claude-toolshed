@@ -40,7 +40,30 @@ Generate a D2 entity-relationship diagram for database schemas, SQL tables, and 
    - Include ALL relevant fields with proper data types
    - Mark constraints using `{constraint: ...}` syntax
    - Connect related tables using dot notation on primary/foreign key fields
-   - Use arrow direction to show the "many" side: `users.id -> orders.user_id`
+   - Use crow's foot arrowheads to express cardinality natively:
+
+   ```d2
+   # one-to-many (one user → many orders)
+   users.id -> orders.user_id: {
+     source-arrowhead.shape: cf-one-required
+     target-arrowhead.shape: cf-many
+   }
+
+   # many-to-many (orders → products via order_items)
+   orders.id -> order_items.order_id: {
+     source-arrowhead.shape: cf-one-required
+     target-arrowhead.shape: cf-many
+   }
+   ```
+
+   **Crow's foot arrowhead values:**
+
+   | Value | Meaning |
+   |---|---|
+   | `cf-one` | Exactly one (optional) |
+   | `cf-one-required` | Exactly one (required) |
+   | `cf-many` | Zero or more |
+   | `cf-many-required` | One or more |
 
    **Constraint syntax:**
 

@@ -300,7 +300,23 @@ USER.id -> ORDER.user_id: places
 USER -> ORDER: places
 ```
 
-**Cardinality annotations** (`||--o{`, `}o--||`, etc.) — D2 does not support crow's foot notation natively. Encode cardinality in the relationship label: `USER.id -> ORDER.user_id: "1 to many"`
+**Cardinality annotations** — D2 supports crow's foot notation natively via `source-arrowhead` and `target-arrowhead`. Map Mermaid cardinality to D2 arrowhead shapes:
+
+| Mermaid | Meaning | D2 arrowhead |
+|---|---|---|
+| `\|o` | Zero or one | `cf-one` |
+| `\|\|` | Exactly one | `cf-one-required` |
+| `o{` | Zero or more | `cf-many` |
+| `\|{` | One or more | `cf-many-required` |
+
+```d2
+# Mermaid: USER ||--o{ ORDER : "places"
+# D2:
+USER.id -> ORDER.user_id: places {
+  source-arrowhead.shape: cf-one-required
+  target-arrowhead.shape: cf-many
+}
+```
 
 ---
 
