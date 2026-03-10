@@ -216,6 +216,26 @@ CORRECT: Disable sketch when using sql_table shapes.
 vars: { d2-config: { sketch: false } }
 ```
 
+### Using |md ... | for Long Multiline Content
+
+D2 markdown blocks collapse to single-line foreignObjects with enormous widths (600-1200px) and height fixed at 24px.
+
+```
+WRONG:
+node: |md
+  **Title** — description
+  *Details about the node*
+  *More context here*
+|
+
+CORRECT (plain multiline):
+node: "Title\nDescription\nDetails about the node\nMore context here" {
+  style.font-size: 14
+}
+
+USE |md ... | ONLY for short text needing bold/italic/links.
+```
+
 ---
 
 ## Output and File Mistakes

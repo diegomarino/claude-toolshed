@@ -32,6 +32,9 @@ Use this to route from symptom or intent to the right action.
 | Label truncated at `:` | Quote the label: `"POST /api: 200"` |
 | Node not found across containers | Use dot notation: `container.node` |
 | Sketch mode rendering broken | Only works with generic shapes — not compatible with `sql_table` |
+| Diagram too wide / text on one line | Use `\n` labels instead of `\|md\|` blocks — see layout-guide.md |
+| Self-loop expanding diagram width | Move info to node label or note — see layout-guide.md |
+| Layout doesn't look right | Compare both engines: render with `--layout dagre` and `--layout elk` |
 
 ---
 

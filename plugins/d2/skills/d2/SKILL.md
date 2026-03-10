@@ -60,6 +60,7 @@ Load only the specialist for the requested type. Do not pre-load all specialists
 | Learning D2, preventing errors | `references/guides/common-mistakes.md` |
 | Themes, layout engines, sketch mode | `references/guides/styling-guide.md` |
 | Quick routing from symptom to action | `references/guides/quick-decision-matrix.md` |
+| Layout problems, aspect ratio, text width | `references/guides/layout-guide.md` |
 
 `styling-guide.md` is a special-case reference. Load it only when the user explicitly asks for theme changes, layout tuning, or sketch mode.
 

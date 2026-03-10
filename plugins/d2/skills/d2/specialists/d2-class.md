@@ -117,10 +117,22 @@ Generate a D2 class diagram for OOP design, class hierarchies, interfaces, and d
 
    Filename: `class-{short-description}-{YYYYMMDD}.d2`
 
-9. **Render** (if `auto_render=true`):
+9. **Render** (if `auto_render=true` or user asks):
+
+   Render with both layout engines for comparison:
 
    ```bash
-   d2 {output_file} {output_directory}/{basename}.svg
+   d2 --layout dagre {output_file} {output_directory}/{basename}-dagre.svg
+   d2 --layout elk {output_file} {output_directory}/{basename}-elk.svg
+   ```
+
+   Present both:
+
+   ```
+   Rendered with both layout engines:
+   - {basename}-dagre.svg (faster, simpler layout)
+   - {basename}-elk.svg (better spacing for complex hierarchies)
+   Compare both and pick the one that reads best.
    ```
 
 ## Critical Rules
