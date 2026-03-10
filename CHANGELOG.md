@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.3 (2026-03-10)
+
+- **d2** v1.1.3 — [enhance layout and rendering guidance in various guides](plugins/d2/CHANGELOG.md#113-2026-03-10)
+
+
 ## v1.4.2 (2026-03-10)
 
 - **d2** v1.1.2 — [add advanced features for sequence diagrams and architecture templates](plugins/d2/CHANGELOG.md#112-2026-03-10)
