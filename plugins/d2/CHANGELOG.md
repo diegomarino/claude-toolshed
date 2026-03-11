@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0 (2026-03-11)
+
+### Features
+
+- redesign plugin as diagram composition system (52d172e)
+
+
 ## 1.1.3 (2026-03-10)
 
 ### Other

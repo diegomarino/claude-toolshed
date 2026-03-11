@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.5.0 (2026-03-11)
+
+- **d2** v1.2.0 — [redesign plugin as diagram composition system](plugins/d2/CHANGELOG.md#120-2026-03-11)
+
+
 ## v1.4.3 (2026-03-10)
 
 - **d2** v1.1.3 — [enhance layout and rendering guidance in various guides](plugins/d2/CHANGELOG.md#113-2026-03-10)
