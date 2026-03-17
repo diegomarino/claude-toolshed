@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# post-checkout.sh — Install project dependencies after clone or worktree creation
+# dev-post-checkout.sh — Install project dependencies after clone or worktree creation
 #
 # Usage:
-#   bash tools/dev/post-checkout.sh          # auto-detect from lock file
+#   bash tools/dev/dev-post-checkout.sh          # auto-detect from lock file
 #
 # Idempotent: safe to run multiple times. Detects the package manager from the
 # lock file present in the repo root and runs the matching install command.

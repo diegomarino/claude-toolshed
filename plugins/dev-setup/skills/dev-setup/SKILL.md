@@ -34,78 +34,7 @@ If the script exits with an error, show the missing dependency message to the us
 
 If `$ARGUMENTS` starts with "upgrade":
 
-1. **Resolve plugin path** — find the `reference/` directory:
-
-   ```bash
-   SKILL_DIR="$(find "$HOME/.claude/plugins/cache" -type d -name "dev-setup" -path "*/skills/dev-setup" 2>/dev/null | head -1)"
-   [[ -z "$SKILL_DIR" ]] && SKILL_DIR="$(find "$HOME" -maxdepth 8 -type d -name "dev-setup" -path "*/skills/dev-setup" 2>/dev/null | head -1)"
-   echo "SKILL_DIR=$SKILL_DIR"
-   ```
-
-2. **Find project script dir:**
-   - Parse `package.json` for a `dev:start` script → extract the path → `dirname`
-   - Example: `"dev:start": "bash tools/dev/dev-start.sh"` → `SCRIPT_DIR=tools/dev`
-   - Fallback: `tools/dev/`
-   - If `SCRIPT_DIR` doesn't exist: stop with "No script directory found. Run `/dev-setup` first to generate scripts."
-
-3. **Match and diff each reference script:**
-   For each `$SKILL_DIR/reference/*.sh`:
-   a. Read line 2 to extract the identifier (e.g. `# dev-read-ports.sh — Read dev server ports`)
-   b. Extract just the name part: `# {name} —`
-   c. Search every `$SCRIPT_DIR/*.sh` for a file whose line 2 contains the same `# {name} —` pattern
-   d. If no match → skip (script wasn't deployed for this project)
-   e. If match found → diff the reference file against the deployed file
-   f. If identical → skip (already up to date)
-   g. If different → add to upgrade list with both paths
-
-4. **Report results:**
-   - If upgrade list is empty: "✅ All scripts up to date."
-   - For each upgrade candidate, show:
-
-     ```
-     📦 {ref-name} (deployed as {deployed-path})
-
-     Changes available:
-     - {summary of key differences — read both versions and describe}
-
-     [diff output — use `diff -u deployed reference`]
-     ```
-
-   - Ask user to approve each change individually with `AskUserQuestion`:
-     - "Apply this update?" → Yes / No / Show full file
-
-5. **Apply approved changes:**
-   - For each approved update: replace the deployed file content with the reference content using the `Edit` tool (or `Write` if the diff is too large)
-   - Run `shellcheck` on each modified script and fix any errors
-
-6. Skip to **Step 13** (Output summary) — adapt the summary to show upgrade results instead of generation results:
-
-   ```
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ✅ Upgrade complete
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-   Updated:
-     ✓ tools/dev/dev-read-ports.sh  (worktree fallback for env resolution)
-     ✓ tools/dev/dev-stop.sh        (improved process cleanup)
-
-   Skipped (no changes):
-     · dev-session-name.sh
-     · dev-start.sh
-
-   Additional scripts available:
-     · chrome-profile-setup.sh  — Chrome dev profile setup
-     · dev-wt-ports.sh          — worktree port isolation
-     Run /dev-setup to add these to your project.
-   ```
-
-   The "Additional scripts available" section lists all reference scripts that have no match in the project (by line-2 identifier). Show the script name and its line-2 description. If there are none, omit this section entirely.
-
-**What NOT to upgrade:**
-
-- `package.json` scripts (user may have customized names/args)
-- `.env` / `.env.example` (user data)
-- `.gtrconfig` (user preferences)
+Read `references/upgrade-route.md` and follow the steps there.
 
 ---
 
@@ -161,7 +90,7 @@ First check if `package.json` exists:
 
 If `NODE=false`, skip the python3 snippet and the `concurrently` check in Step 4 — set `CONCURRENTLY=false` and note "not a Node project".
 
-> **Scope note:** Service detection, runner options, and `package.json` script generation (Steps 3-9) assume a Node/JS project. For non-Node stacks (`cargo`, `go`, etc.), only `post-checkout.sh` (dependency install) is generated reliably. Tell the user: "Service management scripts for [stack] are not yet supported — only dependency install was generated. You can add custom start/stop scripts to `<SCRIPT_DIR>/` manually."
+> **Scope note:** Service detection, runner options, and `package.json` script generation (Steps 3-9) assume a Node/JS project. For non-Node stacks (`cargo`, `go`, etc.), only `dev-post-checkout.sh` (dependency install) is generated reliably. Tell the user: "Service management scripts for [stack] are not yet supported — only dependency install was generated. You can add custom start/stop scripts to `<SCRIPT_DIR>/` manually."
 
 Read `package.json` scripts for entries matching `dev:*`, `start`, `serve`, `preview`:
 
@@ -178,7 +107,7 @@ for k, v in d.get('scripts', {}).items():
 Read existing port assignments from env files:
 
 ```bash
-grep -hE "^(PORT|WEB_PORT|STORYBOOK_PORT|TTYD_PORT|VITE_|.*_PORT)=" \
+grep -hE "^([A-Z][A-Z0-9_]*_WT_PORT|VITE_[A-Z_]*)=" \
   .env.example .env 2>/dev/null | head -20 \
   || echo "ENV_FILES=none"
 ```
@@ -227,13 +156,16 @@ If `shellcheck` is missing (`STATUS=missing`), warn the user: "Required tool `sh
 
 ```bash
 # Chrome
-grep -hE "^(CHROME_PROFILE|CHROME_CDP_PORT)=" .env.example .env 2>/dev/null \
+grep -hE "^(CHROME_PROFILE|CHROME_CDP_WT_PORT)=" .env.example .env 2>/dev/null \
   || echo "CHROME=not-configured"
 
 # git gtr
+command -v gtr >/dev/null 2>&1 && echo "GTR_BINARY=found" || echo "GTR_BINARY=missing"
 [[ -f .gtrconfig ]] && echo "GTRCONFIG=found" && cat .gtrconfig || echo "GTRCONFIG=none"
 [[ -f .gtr-setup.sh ]] && echo "GTR_SETUP=found" || echo "GTR_SETUP=none"
 ```
+
+Set `GTR="yes"` if `GTR_BINARY=found`, `GTR="no"` otherwise. Do not ask the user — presence in PATH is the decision.
 
 If `.gtrconfig` exists, use Context7 to validate hook syntax:
 
@@ -255,9 +187,9 @@ Q1 — header: "Services", multiSelect: true
   question: "Which services should be managed? (detected from project)"
   options — build dynamically from detected SCRIPT entries (up to 4), e.g.:
     - label: "api  :3000"         description: "Backend server (PORT=3000)"
-    - label: "web  :5173"         description: "Frontend dev server (WEB_PORT=5173)"
-    - label: "storybook  :61000"  description: "Component explorer (STORYBOOK_PORT=61000)"
-    - label: "ttyd  :7681"        description: "Browser terminal (TTYD_PORT=7681)"
+    - label: "web  :5173"         description: "Frontend dev server (WEB_WT_PORT=5173)"
+    - label: "storybook  :61000"  description: "Component explorer (STORYBOOK_WT_PORT=61000)"
+    - label: "ttyd  :7681"        description: "Browser terminal (TTYD_WT_PORT=7681)"
   Note: show only detected services. If fewer than 2 detected, add a generic "custom :3000" option alongside any detected ones (do not replace them).
 
 Q2 — header: "Runner", multiSelect: false
@@ -292,14 +224,13 @@ Store the user's answers as:
 
 ### Step 7: Propose configuration — Call B (conditional)
 
-**Only run Call B if `CHROME = "Yes — create profile"` OR `.gtrconfig` was not already configured (GTRCONFIG=none).**
+**Only run Call B if `CHROME = "Yes — create profile".`**
 
-If neither condition applies, skip to Step 8.
+If not, skip to Step 8.
 
 ```
-AskUserQuestion (1-2 questions, only include questions that apply):
+AskUserQuestion (1 question):
 
-[If CHROME = "Yes — create profile"]:
 Q1 — header: "Profile name", multiSelect: false
   question: "Chrome profile name and CDP port?"
   options — derive <project-name> from package.json "name" field or directory basename:
@@ -307,20 +238,12 @@ Q1 — header: "Profile name", multiSelect: false
     - label: "<project-name>  :19223"  description: "Profile: chrome-<project-name>, CDP: 19223"
     - label: "<project-name>  :19224"  description: "Profile: chrome-<project-name>, CDP: 19224"
     - label: "Other"                   description: "Enter name and port manually — skill will prompt"
-
-[If GTRCONFIG=none]:
-Q2 — header: "git gtr", multiSelect: false
-  question: "Set up git gtr hooks for worktree port isolation?"
-  options:
-    - label: "Yes — update .gtrconfig"  description: "Adds postCreate hooks for deps + port allocation."
-    - label: "No — skip"                description: "Skip. Port isolation will be manual."
 ```
 
 Store answers as:
 
 - `CHROME_PROFILE_NAME` — profile name extracted from label (e.g. "myapp" from "myapp  :19222"), or if "Other": ask user for profile name (string, no spaces) and CDP port (number) separately
-- `CHROME_CDP_PORT` — port extracted from label (e.g. "19222")
-- `GTR` — "yes" or "no"
+- `CHROME_CDP_WT_PORT` — port extracted from label (e.g. "19222")
 
 ## Script Conventions
 
@@ -351,13 +274,17 @@ CHROME=chrome-myapp STATUS=running CDP_PORT=19222 CDP_URL=http://localhost:19222
 
 ### Port variable naming
 
+All vars ending in `_WT_PORT` are
+**worktree-isolated service ports** written to `.wt-ports.env` per worktree.
+Config/range vars use `PORT_` prefix (e.g. `PORT_MIN`, `PORT_MAX`).
+
 | Service | Env var |
 | --- | --- |
-| API server | `PORT` |
-| Web/Vite | `WEB_PORT` |
-| Storybook | `STORYBOOK_PORT` |
-| ttyd | `TTYD_PORT` |
-| Chrome CDP | `CHROME_CDP_PORT` |
+| API server | `API_WT_PORT` |
+| Web/Vite | `WEB_WT_PORT` |
+| Storybook | `STORYBOOK_WT_PORT` |
+| ttyd | `TTYD_WT_PORT` |
+| Chrome CDP | `CHROME_CDP_WT_PORT` |
 
 ### Port allocator (`dev-allocate-ports.sh`)
 
@@ -400,7 +327,7 @@ Reference files (in `$SKILL_DIR/reference/`) are patterns from a `tools/dev/` + 
 | `dev-tmux-start.sh` / `dev-concurrently.sh` | `dev-start.sh` |
 | `dev-restart-all-servers.sh` | `dev-restart.sh` |
 
-Utility scripts keep their names: `dev-read-ports.sh`, `dev-session-name.sh`, `dev-allocate-ports.sh`, `post-checkout.sh`.
+Utility scripts keep their names: `dev-read-ports.sh`, `dev-session-name.sh`, `dev-allocate-ports.sh`, `dev-post-checkout.sh`.
 
 #### Reference loading (progressive — load only what you need)
 
@@ -412,7 +339,7 @@ Utility scripts keep their names: `dev-read-ports.sh`, `dev-session-name.sh`, `d
 - `$SKILL_DIR/reference/dev-servers-status.sh` — KEY=value status format
 - `$SKILL_DIR/reference/dev-stop-all-servers.sh` — stop pattern
 - `$SKILL_DIR/reference/dev-restart-all-servers.sh` — restart pattern
-- `$SKILL_DIR/reference/post-checkout.sh` — dependency install after clone
+- `$SKILL_DIR/reference/dev-post-checkout.sh` — dependency install after clone
 
 **Read if RUNNER includes tmux:**
 
@@ -425,7 +352,7 @@ Utility scripts keep their names: `dev-read-ports.sh`, `dev-session-name.sh`, `d
 
 **Read if CHROME = "Yes — create profile":**
 
-- `$SKILL_DIR/reference/chrome-profile-setup.sh` — Chrome profile setup
+- `$SKILL_DIR/reference/dev-chrome-profile-setup.sh` — Chrome profile setup
 - `$SKILL_DIR/reference/dev-open-browser.sh` — browser open
 
 **Do not call directly** (inline the pattern):
@@ -437,16 +364,17 @@ Utility scripts keep their names: `dev-read-ports.sh`, `dev-session-name.sh`, `d
 **Always generate (in this order):**
 
 1. `<SCRIPT_DIR>/dev-allocate-ports.sh` — pool-based port allocator. Allocates N consecutive free ports from `20000-29999`. Used by `dev-wt-ports.sh` and can be run standalone to reassign ports on collision.
-2. `<SCRIPT_DIR>/dev-read-ports.sh` — port reading utility (no strict mode, sourced only)
-3. `<SCRIPT_DIR>/dev-session-name.sh` — tmux session naming function (no strict mode, sourced only)
-4. `<SCRIPT_DIR>/dev-status.sh` — KEY=value status of all selected services + tmux + chrome
-5. `<SCRIPT_DIR>/dev-stop.sh` — kill server processes (`lsof -ti + kill`) + tmux kill-session
-6. `<SCRIPT_DIR>/dev-start.sh` — start all services:
+2. `<SCRIPT_DIR>/dev-wt-ports.sh` — dual-mode worktree port allocator. Reads `services` keys from `.claude/dev-setup.json`, allocates one port per service key via `dev-allocate-ports.sh`, writes results to `.wt-ports.env`.
+3. `<SCRIPT_DIR>/dev-read-ports.sh` — port reading utility (no strict mode, sourced only)
+4. `<SCRIPT_DIR>/dev-session-name.sh` — tmux session naming function (no strict mode, sourced only)
+5. `<SCRIPT_DIR>/dev-status.sh` — KEY=value status of all selected services + tmux + chrome
+6. `<SCRIPT_DIR>/dev-stop.sh` — kill server processes (`lsof -ti + kill`) + tmux kill-session
+7. `<SCRIPT_DIR>/dev-start.sh` — start all services:
    - If `RUNNER=tmux`: create detached tmux session with one pane per service, set pane titles to `service:port`
    - If `RUNNER=concurrently`: `concurrently` with named processes
    - If `RUNNER=tmux + fallback`: try tmux, fall back to concurrently if not on PATH
    - If `RUNNER=manual only`: print usage instructions only
-7. `<SCRIPT_DIR>/dev-restart.sh` — resolve sibling path via BASH_SOURCE[0], then call stop and start:
+8. `<SCRIPT_DIR>/dev-restart.sh` — resolve sibling path via BASH_SOURCE[0], then call stop and start:
 
    ```bash
    #!/usr/bin/env bash
@@ -456,16 +384,33 @@ Utility scripts keep their names: `dev-read-ports.sh`, `dev-session-name.sh`, `d
    exec bash "$SCRIPT_DIR/dev-start.sh"
    ```
 
-8. `<SCRIPT_DIR>/post-checkout.sh` — install deps using detected `$PM`
+9. `<SCRIPT_DIR>/dev-post-checkout.sh` — install deps using detected `$PM`
 
 **If `GTR=yes`, also generate:**
 
-1. `<SCRIPT_DIR>/dev-wt-ports.sh` — calls `dev-allocate-ports.sh` to get a block of free ports from the `20000-29999` pool, writes them to `.wt-ports.env`. Uses `$WORKTREE_PATH`, `$BRANCH` env vars (set by git gtr postCreate hook).
+1. `<SCRIPT_DIR>/gtr-setup.sh` — team onboarding script. Configures git gtr hooks for the project (see Step 11).
 
 **If `CHROME = "Yes — create profile"`, also generate:**
 
-1. `<SCRIPT_DIR>/chrome-profile-setup.sh` — creates `~/.chrome-profiles/<CHROME_PROFILE_NAME>` + `~/.local/bin/<CHROME_PROFILE_NAME>` launcher, upserts `CHROME_PROFILE` + `CHROME_CDP_PORT` in `.env`
+1. `<SCRIPT_DIR>/dev-chrome-profile-setup.sh` — creates `~/.chrome-profiles/<CHROME_PROFILE_NAME>` + `~/.local/bin/<CHROME_PROFILE_NAME>` launcher, upserts `CHROME_PROFILE` + `CHROME_CDP_WT_PORT` in `.env`
 2. `<SCRIPT_DIR>/dev-open-browser.sh` — reads dev-status output, opens one tab per running service in Chrome profile
+
+**Write `.claude/dev-setup.json`** — create or overwrite with two keys:
+
+- `scriptDir`: the script directory chosen in Q4 (e.g. `tools/dev`)
+- `services`: an object mapping each selected service's port variable to its start command, derived from the services selected in Call A and the detected start commands from Step 3. Example:
+
+  ```json
+  {
+    "scriptDir": "tools/dev",
+    "services": {
+      "API_WT_PORT":  "pnpm dev:api",
+      "WEB_WT_PORT":  "pnpm dev:web"
+    }
+  }
+  ```
+
+  Do not include `wtPattern`. Do not include Chrome or tmux config — `services` covers server processes only.
 
 ### Step 9: Update package.json
 
@@ -478,7 +423,7 @@ Add to the `scripts` object using the `Edit` tool. Skip any key that already exi
 | `dev:restart` | `bash <SCRIPT_DIR>/dev-restart.sh` |
 | `dev:status` | `bash <SCRIPT_DIR>/dev-status.sh` |
 | `dev:browser` | `bash <SCRIPT_DIR>/dev-open-browser.sh` |← only if CHROME=yes
-| `dev:browser:setup` | `bash <SCRIPT_DIR>/chrome-profile-setup.sh` |← only if CHROME=yes
+| `dev:browser:setup` | `bash <SCRIPT_DIR>/dev-chrome-profile-setup.sh` |← only if CHROME=yes
 
 ### Step 10: Update .env.example
 
@@ -486,14 +431,14 @@ Build the expected port variables from `SELECTED_SERVICES` and the ports detecte
 
 ```bash
 # Only include variables for selected services:
-PORT=3000              # if api selected
-WEB_PORT=5173          # if web selected
-STORYBOOK_PORT=61000   # if storybook selected
-TTYD_PORT=7681         # if ttyd selected
+API_WT_PORT=3000              # if api selected
+WEB_WT_PORT=5173              # if web selected
+STORYBOOK_WT_PORT=61000       # if storybook selected
+TTYD_WT_PORT=7681             # if ttyd selected
 
 # Only if CHROME = "Yes — create profile":
 CHROME_PROFILE=<CHROME_PROFILE_NAME>
-CHROME_CDP_PORT=<CHROME_CDP_PORT>
+CHROME_CDP_WT_PORT=<CHROME_CDP_PORT>
 ```
 
 #### If `.env.example` does not exist
@@ -504,8 +449,8 @@ Create it with a header:
 # Generated by /dev-setup for <project-name>
 # Copy to .env and adjust ports if running multiple worktrees
 
-PORT=3000
-WEB_PORT=5173
+API_WT_PORT=3000
+WEB_WT_PORT=5173
 ...
 ```
 
@@ -517,7 +462,7 @@ For each expected variable:
 
    ```bash
    # --- dev-setup managed ports (added <date>) ---
-   WEB_PORT=5173
+   WEB_WT_PORT=5173
    ```
 
 2. **Variable present with same value** → skip (no change needed)
@@ -542,7 +487,7 @@ If `.gtrconfig` exists, append missing entries. If it doesn't exist, create it.
     include = .env.example
 
 [hooks]
-    postCreate = bash <SCRIPT_DIR>/post-checkout.sh
+    postCreate = bash <SCRIPT_DIR>/dev-post-checkout.sh
     postCreate = bash <SCRIPT_DIR>/dev-wt-ports.sh
 ```
 
@@ -554,7 +499,7 @@ Also create `<SCRIPT_DIR>/gtr-setup.sh` for team onboarding:
 # Run after: git clone + cd into repo
 # Usage: bash <SCRIPT_DIR>/gtr-setup.sh
 git config --add gtr.copy.include ".env.example"
-git config --add gtr.hook.postCreate "bash <SCRIPT_DIR>/post-checkout.sh"
+git config --add gtr.hook.postCreate "bash <SCRIPT_DIR>/dev-post-checkout.sh"
 git config --add gtr.hook.postCreate "bash <SCRIPT_DIR>/dev-wt-ports.sh"
 echo "✓ git gtr configured for this project"
 ```
@@ -569,12 +514,12 @@ Before running shellcheck, verify that each generated script is **adapted to thi
 | **Script names** | Cross-script calls use generated names (`dev-stop.sh`, `dev-start.sh`, `dev-status.sh`) — NOT reference names (`dev-stop-all-servers.sh`, `dev-tmux-start.sh`, `dev-servers-status.sh`). |
 | **Service commands** | `dev-start.sh` launch commands match detected `$PM` and actual `package.json` script names — not hardcoded `pnpm dev:back` / `pnpm dev:front` from references. |
 | **Ports** | Services in `dev-start.sh` / `dev-status.sh` match `SELECTED_SERVICES` from Step 6. No hardcoded ports from the reference (e.g. 3001, 7777). |
-| **Package manager** | `post-checkout.sh` uses `$PM` install command (e.g. `npm install`, `pnpm install`) — not hardcoded `npm`. |
+| **Package manager** | `dev-post-checkout.sh` uses `$PM` install command (e.g. `npm install`, `pnpm install`) — not hardcoded `npm`. |
 | **tmux session name** | `dev-start.sh` calls `dev_session_name` (sourced from `dev-session-name.sh`) — not a hardcoded string. |
-| **Port vars** | `dev-read-ports.sh` exports the same var names as detected in Step 3 (`PORT`, `WEB_PORT`, etc.) with correct defaults. |
+| **Port vars** | `dev-read-ports.sh` pattern-exports vars matching `*_WT_PORT` from `.wt-ports.env` → `env_file` → `.env.example`. Verify the script uses pattern-based export (grep `_WT_PORT`) and sources correctly — not a static list of named vars. |
 | **Port allocator** | `dev-allocate-ports.sh` uses pool range `20000-29999` and `lsof` for availability checks. |
-| **Worktree env vars** | `dev-wt-ports.sh` (if generated) calls `dev-allocate-ports.sh` for port allocation. Uses `$WORKTREE_PATH` and `$BRANCH` — not `$PWD` or a hardcoded path. |
-| **Chrome vars** | `chrome-profile-setup.sh` (if generated) uses `$CHROME_PROFILE_NAME` and `$CHROME_CDP_PORT` from Step 7 — not reference defaults. |
+| **Worktree env vars** | `dev-wt-ports.sh` (if generated) calls `dev-allocate-ports.sh` for port allocation. Uses `$WORKTREE_PATH` and `$BRANCH` — not `$PWD` or a hardcoded path. Port list comes from `services` keys in `.claude/dev-setup.json`, not from grep. |
+| **Chrome vars** | `dev-chrome-profile-setup.sh` (if generated) uses `$CHROME_PROFILE_NAME` and `$CHROME_CDP_PORT` from Step 7 — not reference defaults. |
 | **Sibling resolution** | All internal cross-references between scripts use `"$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"` to resolve siblings — not bare filenames. |
 
 For each file that fails a check: fix it before proceeding to shellcheck.
@@ -630,8 +575,8 @@ Scripts generated in <SCRIPT_DIR>/:
   ✓ dev-stop.sh            → <PM> dev:stop
   ✓ dev-restart.sh         → <PM> dev:restart
   ✓ dev-status.sh          → <PM> dev:status
-  ✓ post-checkout.sh       → called on git clone / gtr new
-  [✓ chrome-profile-setup.sh  → <PM> dev:browser:setup]
+  ✓ dev-post-checkout.sh       → called on git clone / gtr new
+  [✓ dev-chrome-profile-setup.sh  → <PM> dev:browser:setup]
   [✓ dev-open-browser.sh      → <PM> dev:browser]
   [✓ dev-wt-ports.sh          → called by git gtr postCreate]
   [✓ gtr-setup.sh             → one-time team onboarding]

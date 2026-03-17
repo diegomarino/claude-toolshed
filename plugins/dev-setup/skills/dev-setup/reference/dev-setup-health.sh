@@ -23,7 +23,7 @@ check_tool shellcheck "recommended" "brew install shellcheck"
 check_tool tmux "optional" "brew install tmux"
 check_tool shfmt "optional" "brew install shfmt"
 check_tool ttyd "optional" "brew install ttyd"
-check_tool gtr "optional" "https://github.com/coderabbitai/git-worktree-runner"
+check_tool gtr "recommended" "https://github.com/coderabbitai/git-worktree-runner"
 
 # Node.js (needed for Context7)
 if command -v node >/dev/null 2>&1; then

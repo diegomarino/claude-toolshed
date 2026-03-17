@@ -1,62 +1,75 @@
 #!/usr/bin/env bash
-# dev-read-ports.sh — Read dev server ports for the current worktree.
+# dev-read-ports.sh — Export worktree-isolated port vars for the current shell.
 #
 # Usage (sourced only — do not call directly):
 #   source tools/dev/dev-read-ports.sh
-#   # Exports: API_PORT, WEB_PORT, STORYBOOK_PORT
 #
-# Reads from (first match wins):
-#   .wt-ports.env → .env → .env.example → main worktree .env → hardcoded defaults
+# Reads wt_port_pattern and env_file from .claude/dev-setup.json (defaults:
+# _WT_PORT and .env). Sources the first existing file in:
+#   .wt-ports.env -> $env_file -> .env.example
+# and exports all vars matching the pattern.
 #
-# Exported variables:
-#   API_PORT     API server port (from PORT key)
-#   WEB_PORT     Web app dev server port
-#   STORYBOOK_PORT   Storybook component explorer port
-#
-# Requires: bash, grep, cut
-# Context:  Shared utility sourced by dev lifecycle scripts.
-
+# Requires: bash, python3, grep
 # shellcheck shell=bash
 
 # Note: intentionally no 'set -euo pipefail' — this file is sourced only.
-# Adding strict mode here would enable it in the calling shell, which is undesirable.
 
-_read_env() {
-  local var="$1" default="$2" file
+_WT_PATTERN=$(python3 -c "
+import json
+try:
+    c = json.load(open('.claude/dev-setup.json'))
+    print(c.get('wt_port_pattern', '_WT_PORT'))
+except Exception:
+    print('_WT_PORT')
+" 2>/dev/null || echo "_WT_PORT")
 
-  # In a linked worktree, --git-dir and --git-common-dir differ.
-  # Use git-common-dir to locate the main worktree root so we can fall back
-  # to its .env when the linked worktree has no local copy (e.g. gitignored).
-  local main_root=""
-  local git_dir git_common
-  git_dir=$(git rev-parse --git-dir 2>/dev/null || true)
-  git_common=$(git rev-parse --git-common-dir 2>/dev/null || true)
-  if [[ -n "$git_common" && "$git_dir" != "$git_common" ]]; then
-    main_root=$(cd "$(dirname "$git_common")" && pwd)
+_ENV_FILE=$(python3 -c "
+import json
+try:
+    c = json.load(open('.claude/dev-setup.json'))
+    print(c.get('env_file', '.env'))
+except Exception:
+    print('.env')
+" 2>/dev/null || echo ".env")
+
+# First match wins: .wt-ports.env -> $env_file -> .env.example
+_PORT_SOURCE=""
+for _f in ".wt-ports.env" "$_ENV_FILE" ".env.example"; do
+  if [[ -f "$_f" ]]; then
+    _PORT_SOURCE="$_f"
+    break
   fi
+done
 
-  # Priority: local .wt-ports.env → local .env → main .env → local .env.example → main .env.example
-  local search_files=(".wt-ports.env" ".env")
-  [[ -n "$main_root" ]] && search_files+=("$main_root/.env")
-  search_files+=(".env.example")
-  [[ -n "$main_root" ]] && search_files+=("$main_root/.env.example")
+if [[ -n "$_PORT_SOURCE" ]]; then
+  while IFS= read -r _line; do
+    _k="${_line%%=*}"
+    _v="${_line#*=}"
+    [[ -n "$_k" ]] && export "${_k}=${_v}"
+  done < <(grep -E "^[A-Z][A-Z0-9_]*${_WT_PATTERN}=" "$_PORT_SOURCE" 2>/dev/null)
+fi
 
-  for file in "${search_files[@]}"; do
-    if [[ -f "$file" ]]; then
-      local val
-      val=$(grep -E "^${var}=" "$file" | head -1 | cut -d= -f2)
-      if [[ -n "$val" ]]; then
-        echo "$val"
-        return
-      fi
+unset _WT_PATTERN _ENV_FILE _PORT_SOURCE _f _k _v _line
+
+# _read_env VAR [DEFAULT] — Read a single env var from the first existing source.
+# Called by sibling scripts (dev-servers-status.sh, dev-open-browser.sh).
+_read_env() {
+  local _var="$1" _default="${2:-}"
+  local _val _src
+  local _ef
+  _ef=$(python3 -c "
+import json
+try:
+    c = json.load(open('.claude/dev-setup.json'))
+    print(c.get('env_file', '.env'))
+except Exception:
+    print('.env')
+" 2>/dev/null || echo ".env")
+  for _src in ".wt-ports.env" "$_ef" ".env.example"; do
+    if [[ -f "$_src" ]]; then
+      _val=$(grep -E "^${_var}=" "$_src" 2>/dev/null | cut -d= -f2-)
+      if [[ -n "$_val" ]]; then echo "$_val"; return; fi
     fi
   done
-  echo "$default"
+  echo "$_default"
 }
-
-API_PORT=$(_read_env PORT 3000)
-WEB_PORT=$(_read_env WEB_PORT 5173)
-STORYBOOK_PORT=$(_read_env STORYBOOK_PORT 61000)
-TTYD_PORT=$(_read_env TTYD_PORT 7681)
-
-export API_PORT WEB_PORT STORYBOOK_PORT TTYD_PORT

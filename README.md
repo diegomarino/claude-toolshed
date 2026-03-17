@@ -275,6 +275,8 @@ Detect a project's structure and generate bash scripts for managing dev servers,
 | `/dev-setup` | Interactive setup — detects services, proposes config, generates scripts |
 | `/dev-setup upgrade` | Pull improvements from reference scripts into an existing project |
 | `/dev-setup health` | Check that recommended and optional dependencies are installed |
+| `/dev-worktrees [branch]` | Create an isolated git worktree with deps, port allocation, and baseline tests |
+| `/dev-setup-config [key] [value]` | View or update dev-setup settings (worktrees dir, port pattern, env file) |
 
 <details>
 <summary><strong>Generated scripts</strong> — up to 11 bash scripts based on your project</summary>
@@ -311,7 +313,7 @@ Detect a project's structure and generate bash scripts for managing dev servers,
 
 > **[Full documentation →](plugins/dev-setup/README.md)** — setup flow, script conventions, port naming, upgrade workflow
 
-**Recommended:** [lsof](https://github.com/lsof-org/lsof), [shellcheck](https://github.com/koalaman/shellcheck). **Optional:** [tmux](https://github.com/tmux/tmux), [shfmt](https://github.com/mvdan/sh), [ttyd](https://github.com/tsl0922/ttyd), [gtr](https://github.com/coderabbitai/git-worktree-runner), [Context7 MCP](https://github.com/upstash/context7)
+**Recommended:** [lsof](https://github.com/lsof-org/lsof), [shellcheck](https://github.com/koalaman/shellcheck), [gtr](https://github.com/coderabbitai/git-worktree-runner). **Optional:** [tmux](https://github.com/tmux/tmux), [shfmt](https://github.com/mvdan/sh), [ttyd](https://github.com/tsl0922/ttyd), [Context7 MCP](https://github.com/upstash/context7)
 
 ---
 

@@ -15,6 +15,7 @@ See the [root README](../../README.md#dev-setup) for a quick overview.
   - [3. Generation](#3-generation)
   - [4. Integration](#4-integration)
 - [Port allocation](#port-allocation)
+- [Configuration](#configuration)
 - [Generated scripts](#generated-scripts)
 - [Script conventions](#script-conventions)
 - [Upgrade workflow](#upgrade-workflow)
@@ -36,6 +37,8 @@ See the [root README](../../README.md#dev-setup) for a quick overview.
 | `/dev-setup /path` | Run setup for a specific project directory |
 | `/dev-setup upgrade` | Pull improvements from reference scripts into an existing project |
 | `/dev-setup health` | Check that recommended and optional dependencies are installed |
+| `/dev-worktrees [branch]` | Create an isolated git worktree with deps, port allocation, and baseline tests |
+| `/dev-setup-config [key] [value]` | View or update dev-setup settings (worktrees dir, env file) |
 
 ## Dependencies
 
@@ -48,8 +51,8 @@ Run `/dev-setup health` to check everything at once.
 | [tmux](https://github.com/tmux/tmux) | Optional | Detached dev server sessions | `brew install tmux` |
 | [shfmt](https://github.com/mvdan/sh) | Optional | Format generated scripts | `brew install shfmt` |
 | [ttyd](https://github.com/tsl0922/ttyd) | Optional | Browser-based terminal | `brew install ttyd` |
-| [gtr](https://github.com/coderabbitai/git-worktree-runner) | Optional | Worktree port isolation | `brew install coderabbitai/gtr/gtr` |
-| [node](https://nodejs.org) | Optional | Context7 doc lookups | [nodejs.org](https://nodejs.org) |
+| [gtr](https://github.com/coderabbitai/git-worktree-runner) | Recommended | Worktree gtr hook integration (auto-detected) | `brew install coderabbitai/gtr/gtr` |
+| [node](https://nodejs.org) | Recommended | Context7 doc lookups; JSON parsing for `.claude/dev-setup.json` | [nodejs.org](https://nodejs.org) |
 
 ## How it works
 
@@ -84,7 +87,7 @@ The plugin scans your project to understand its structure before asking any ques
 
 **Existing scripts** — searches `tools/dev/`, `scripts/`, `bin/`, `devtools/` for existing `.sh` files. If a script directory is found, it becomes the default in the configuration step.
 
-**Chrome** — looks for `CHROME_PROFILE` and `CHROME_CDP_PORT` in env files.
+**Chrome** — looks for `CHROME_PROFILE` and `CHROME_CDP_WT_PORT` in env files.
 
 **git gtr** — checks for `.gtrconfig` and existing hook configuration.
 
@@ -101,12 +104,13 @@ After detection, the plugin presents 4-6 interactive questions. The answers driv
 | **Chrome** | Single-select | `Yes — create profile` — creates `~/.chrome-profiles/<name>` and a launcher. `No — skip`. |
 | **Script dir** | Single-select | `tools/dev/` (recommended), `scripts/`, `bin/`, `devtools/`. If an existing directory was detected, it's moved to the first position. |
 
-**Call B** — conditional (1-2 questions, only if Chrome = yes or gtr not yet configured):
+**Call B** — conditional (1 question, only if Chrome = yes):
 
 | Question | Type | When |
 | --- | --- | --- |
 | **Chrome profile** | Single-select | Chrome = yes. Options derived from project name: `<project> :19222`, `:19223`, `:19224`, or custom. |
-| **git gtr** | Single-select | `.gtrconfig` not found. `Yes — update .gtrconfig` adds postCreate hooks. `No — skip`. |
+
+**git gtr** is auto-detected from PATH (`command -v gtr`). No question asked — if gtr is available, `.gtrconfig` and `gtr-setup.sh` are generated automatically.
 
 ### 3. Generation
 
@@ -119,7 +123,7 @@ Scripts are generated based on your answers, **adapted to your project** — not
 | **Service list** | Only the services you selected, not a hardcoded set |
 | **Script names** | Cross-script calls use generated names (`dev-stop.sh`) not reference names (`dev-stop-all-servers.sh`) |
 | **Ports** | Match your detected port assignments, not reference defaults |
-| **Package manager** | `post-checkout.sh` uses your detected PM (`pnpm install`, `npm install`, etc.) |
+| **Package manager** | `dev-post-checkout.sh` uses your detected PM (`pnpm install`, `npm install`, etc.) |
 | **Worktree env vars** | `dev-wt-ports.sh` uses `$WORKTREE_PATH` and `$BRANCH` from git gtr hooks |
 | **Chrome vars** | Uses your chosen profile name and CDP port |
 
@@ -141,7 +145,7 @@ The plugin updates project files to wire the generated scripts into your workflo
 | `dev:restart` | `bash <SCRIPT_DIR>/dev-restart.sh` |
 | `dev:status` | `bash <SCRIPT_DIR>/dev-status.sh` |
 | `dev:browser` | `bash <SCRIPT_DIR>/dev-open-browser.sh` *(only if Chrome = yes)* |
-| `dev:browser:setup` | `bash <SCRIPT_DIR>/chrome-profile-setup.sh` *(only if Chrome = yes)* |
+| `dev:browser:setup` | `bash <SCRIPT_DIR>/dev-chrome-profile-setup.sh` *(only if Chrome = yes)* |
 
 **`.env.example`** — managed with conflict detection:
 
@@ -157,7 +161,7 @@ The plugin updates project files to wire the generated scripts into your workflo
     include = .env.example
 
 [hooks]
-    postCreate = bash <SCRIPT_DIR>/post-checkout.sh
+    postCreate = bash <SCRIPT_DIR>/dev-post-checkout.sh
     postCreate = bash <SCRIPT_DIR>/dev-wt-ports.sh
 ```
 
@@ -192,33 +196,59 @@ bash tools/dev/dev-allocate-ports.sh 4 --validate 23847 23848 23849 23850
 
 No central registry is needed. Each project stores its assigned ports in its own env files. The allocator only checks what's actually listening (`lsof`) at allocation time. With 10,000 ports and typical usage of <100 across all projects, collision probability at allocation time is negligible (~1%).
 
+## Configuration
+
+`/dev-setup` writes a `.claude/dev-setup.json` file at the project root after generating scripts. This file is the authoritative source for which services exist and how to start them:
+
+```json
+{
+  "scriptDir": "tools/dev",
+  "services": {
+    "API_WT_PORT":       "pnpm dev:api",
+    "WEB_WT_PORT":       "pnpm dev:web",
+    "STORYBOOK_WT_PORT": "pnpm storybook"
+  }
+}
+```
+
+| Key | Description |
+| --- | --- |
+| `scriptDir` | Directory where generated scripts live (e.g. `tools/dev`, `scripts`) |
+| `services` | Map of port env var → start command. Keys must end in `_WT_PORT`. Values are the shell commands used to start each service. |
+
+**Services map:** Each entry drives `dev-start.sh` (what command to run), `dev-stop.sh` (what process to kill), `dev-status.sh` (what port to check), and `dev-wt-ports.sh` (how many ports to allocate). The service label (e.g. `api`, `web`) is derived at runtime by stripping `_WT_PORT` and lowercasing.
+
+**Committed to git:** `.claude/dev-setup.json` should be committed. All worktrees inherit it automatically — no copying needed.
+
+**Editing:** Add or remove entries to add or remove services. After editing, re-run `/dev-setup` to regenerate scripts with the updated service list, or `/dev-setup upgrade` to pull in reference improvements without changing your service configuration.
+
 ## Generated scripts
 
-### Always generated (8)
+### Always generated (9)
 
 | Script | Type | Purpose |
 | --- | --- | --- |
 | `dev-allocate-ports.sh` | Standalone | Allocate N consecutive free ports from the 20000-29999 pool |
+| `dev-wt-ports.sh` | Standalone | Allocate ports per worktree, write `.wt-ports.env` (direct or gtr hook invocation) |
 | `dev-read-ports.sh` | Sourced utility | Read ports from `.wt-ports.env` → `.env` → `.env.example` (first match wins) |
 | `dev-session-name.sh` | Sourced utility | Generate tmux session name from branch: `b-<branch>` |
 | `dev-status.sh` | Standalone | KEY=value status for all services + tmux + Chrome |
 | `dev-stop.sh` | Standalone | Kill server processes via `lsof` + tmux kill-session |
 | `dev-start.sh` | Standalone | Launch servers using the chosen runner |
 | `dev-restart.sh` | Standalone | Stop + start (resolves siblings via `BASH_SOURCE[0]`) |
-| `post-checkout.sh` | Standalone | Install deps using detected package manager |
+| `dev-post-checkout.sh` | Standalone | Install deps using detected package manager |
 
 ### Chrome scripts (2, optional)
 
 | Script | Purpose |
 | --- | --- |
-| `chrome-profile-setup.sh` | Create `~/.chrome-profiles/<name>` + launcher in `~/.local/bin/` |
+| `dev-chrome-profile-setup.sh` | Create `~/.chrome-profiles/<name>` + launcher in `~/.local/bin/` |
 | `dev-open-browser.sh` | Open one tab per running service in the Chrome dev profile |
 
-### Worktree scripts (1-2, optional)
+### Worktree scripts (1, optional)
 
 | Script | Purpose |
 | --- | --- |
-| `dev-wt-ports.sh` | Allocate ports via `dev-allocate-ports.sh`, write `.wt-ports.env` for the worktree |
 | `gtr-setup.sh` | One-time team onboarding for git gtr hooks |
 
 ## Script conventions
@@ -242,11 +272,11 @@ CHROME=chrome-myapp STATUS=running CDP_PORT=19222 CDP_URL=http://localhost:19222
 
 | Service | Env var |
 | --- | --- |
-| API server | `PORT` |
-| Web/Vite | `WEB_PORT` |
-| Storybook | `STORYBOOK_PORT` |
-| ttyd | `TTYD_PORT` |
-| Chrome CDP | `CHROME_CDP_PORT` |
+| API server | `API_WT_PORT` |
+| Web/Vite | `WEB_WT_PORT` |
+| Storybook | `STORYBOOK_WT_PORT` |
+| ttyd | `TTYD_WT_PORT` |
+| Chrome CDP | `CHROME_CDP_WT_PORT` |
 
 ### Port resolution order
 
@@ -280,4 +310,4 @@ bash "$SCRIPT_DIR/dev-stop.sh"
 
 ## Non-Node projects
 
-Service detection and runner options assume a Node/JS project. For non-Node stacks (`cargo`, `go`), only `post-checkout.sh` (dependency install) is generated. You can add custom start/stop scripts to the script directory manually.
+Service detection and runner options assume a Node/JS project. For non-Node stacks (`cargo`, `go`), only `dev-post-checkout.sh` (dependency install) is generated. You can add custom start/stop scripts to the script directory manually.

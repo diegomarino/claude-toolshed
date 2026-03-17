@@ -3,7 +3,7 @@
 #
 # Usage (sourced):
 #   source tools/dev/dev-check-ports.sh
-#   # Exports: API_PORT, WEB_PORT, STORYBOOK_PORT, TTYD_PORT
+#   # Exports: API_WT_PORT, WEB_WT_PORT, STORYBOOK_WT_PORT, TTYD_WT_PORT
 #
 # Usage (standalone):
 #   bash tools/dev/dev-check-ports.sh
@@ -59,7 +59,7 @@ _check_ports() {
   local -a port_vars=()
 
   # Build list from exported vars (only check what's configured)
-  for var in API_PORT WEB_PORT STORYBOOK_PORT TTYD_PORT; do
+  for var in API_WT_PORT WEB_WT_PORT STORYBOOK_WT_PORT TTYD_WT_PORT; do
     if [[ -n "${!var:-}" ]]; then
       port_vars+=("$var")
     fi
