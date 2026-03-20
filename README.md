@@ -13,6 +13,7 @@ A plugin marketplace for Claude Code — install pre-packaged skills directly in
   - [merge-checks](#merge-checks)
   - [dev-setup](#dev-setup)
   - [trim-md](#trim-md)
+  - [paperclip](#paperclip)
   - [plugin-updater](#plugin-updater)
 
 ## Install
@@ -27,6 +28,7 @@ Add the marketplace, then install any plugin:
 /plugin install merge-checks@claude-toolshed
 /plugin install dev-setup@claude-toolshed
 /plugin install trim-md@claude-toolshed
+/plugin install paperclip@claude-toolshed
 /plugin install plugin-updater@claude-toolshed
 
 ```
@@ -40,6 +42,7 @@ Add the marketplace, then install any plugin:
 | [merge-checks](#merge-checks) | Audit code changes across 13 quality dimensions |
 | [dev-setup](#dev-setup) | Generate dev server lifecycle scripts with pool-based port isolation (20000-29999) |
 | [trim-md](#trim-md) | Trim and optimize markdown files for LLM agent consumption |
+| [paperclip](#paperclip) | Audit Paperclip AI agent organizations — health, governance, tokens, workspace |
 | [plugin-updater](#plugin-updater) | Auto-update third-party marketplace plugins on session start |
 
 ---
@@ -337,6 +340,37 @@ Trim and optimize markdown files for LLM agent consumption. Removes token waste 
 > **[Full documentation →](plugins/trim-md/README.md)** — all rules with LLM rationale, dual-config strategy, output format, testing
 
 **Requires:** Node.js (markdownlint-cli2 auto-downloaded via npx)
+
+---
+
+### paperclip
+
+Audit [Paperclip](https://github.com/paperclipai/paperclip) AI agent organizations. One command checks API health, agent config, task hygiene, governance compliance, token efficiency, workspace artifacts, and cross-cutting concerns.
+
+| Command | What it does |
+| --- | --- |
+| `/audit-paperclip` | Full org audit — all sections, all agents |
+| `/audit-paperclip --agent CEO` | Audit a single agent |
+| `/audit-paperclip --section governance` | Run one audit section only |
+| `/audit-paperclip --verbose` | Include passing checks in output |
+
+**~80 automated checks** across 7 audit sections:
+
+| Section | Checks | Examples |
+| --- | --- | --- |
+| Agent Health | 19 | Stale sessions, PATCH overwrite detection, permission hangs, budget caps |
+| Task Hygiene | 10 | Stale execution locks, blocked deadlocks, no-progress loops |
+| Governance | 11 | Anti-invention rules, DoD delegation, dead endpoints |
+| Token Efficiency | 7 + metrics | Agentic panic, rate limit tier risk, adapter-aware cost estimates |
+| Workspace | 22 | Secret leaks in logs, missing artifacts, CLAUDE.md config leakage |
+| Cross-Cutting | 9 | Stale endpoints, self-wake loops, language consistency |
+| Reasoning (Claude) | 2 | Done-without-verification, task description quality |
+
+Output: structured report with health score (0-100), severity-rated findings (E1/W1/I1), agent summary, token efficiency table, and prioritized recommendations.
+
+> **[Full documentation →](plugins/paperclip/README.md)** — all checks, output format, architecture, troubleshooting
+
+**Requires:** curl, jq, python3 (for token metrics). **Optional:** rtk (token savings), sqlite3 (DB schema checks)
 
 ---
 
